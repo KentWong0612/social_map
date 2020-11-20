@@ -11,7 +11,7 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Enter login shit"),
+        title: Text("Login Page"),
       ),
       body: Center(
         child: RaisedButton(

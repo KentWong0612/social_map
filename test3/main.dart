@@ -1,12 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'Firebase/UserLoginModel.dart';
+import 'Firebase/AuthenticationService.dart';
+import 'SignInPage.dart';
 import 'camera_page.dart';
-import 'settingTest.dart';
+import 'SettingPageTest.dart';
 import 'MapTest.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(
     MaterialApp(
       home: HomePage(),
@@ -25,10 +29,22 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (Context) => UserLoginModel(null, null),
+    return MultiProvider(
+      providers: [
+        // to pass the instance to the service for doing login
+        Provider<AuthenticationService>(
+          create: (_) => AuthenticationService(FirebaseAuth.instance),
+        ),
+        // access to the getter function of the service so as to listen to the change
+        StreamProvider(
+          create: (context) =>
+              context.read<AuthenticationService>().authStateChanges,
+        ),
+      ],
       child: MaterialApp(
         //insert auth service before materialapp
+        home: AuthenticationWrapper(),
+        /*
         home: DefaultTabController(
           length: 3,
           child: Scaffold(
@@ -68,9 +84,105 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-        ),
+        ),*/
       ),
     );
+  }
+}
+
+class AuthenticationWrapper extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    Widget searchBar = Text('Social Map');
+
+    final firebaseUser = context.watch<User>();
+
+    if (firebaseUser != null) {
+      debugPrint(firebaseUser.email);
+      return DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: TabBar(
+              tabs: [
+                Tab(
+                  icon: Icon(Icons.map),
+                  text: 'MapTest',
+                ),
+                Tab(
+                  icon: Icon(Icons.camera),
+                  text: 'Camera',
+                ),
+                Tab(
+                  icon: Icon(Icons.settings),
+                  text: 'Setting',
+                ),
+              ],
+            ),
+            title: searchBar,
+            actions: [
+              //IconButton(icon: searchIcon, onPressed: _pushSearch),
+              IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () {
+                    showSearch(context: context, delegate: DataSearch());
+                  })
+            ],
+          ),
+          body: TabBarView(
+            physics: NeverScrollableScrollPhysics(),
+            children: [
+              MapTestScreen(),
+              CameraScreen(),
+              SettingPageTest(),
+            ],
+          ),
+        ),
+      );
+    } else {
+      debugPrint('it is null');
+      //return SignInPage();
+      return DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: TabBar(
+              tabs: [
+                Tab(
+                  icon: Icon(Icons.map),
+                  text: 'MapTest',
+                ),
+                Tab(
+                  icon: Icon(Icons.camera),
+                  text: 'Camera',
+                ),
+                Tab(
+                  icon: Icon(Icons.settings),
+                  text: 'Setting',
+                ),
+              ],
+            ),
+            title: searchBar,
+            actions: [
+              //IconButton(icon: searchIcon, onPressed: _pushSearch),
+              IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () {
+                    showSearch(context: context, delegate: DataSearch());
+                  })
+            ],
+          ),
+          body: TabBarView(
+            physics: NeverScrollableScrollPhysics(),
+            children: [
+              MapTestScreen(),
+              CameraScreen(),
+              SettingPageTest(),
+            ],
+          ),
+        ),
+      );
+    }
   }
 }
 
