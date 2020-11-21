@@ -17,19 +17,19 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
     // make use of get current user from context.read<AuthenticationService>()
     return Scaffold(
       appBar: AppBar(
-        title: Text("Login Page"),
+        title: Text('Login Page'),
       ),
       body: Column(children: [
         TextField(
           controller: emailController,
           decoration: InputDecoration(
-            labelText: "Email",
+            labelText: 'Email',
           ),
         ),
         TextField(
           controller: passwordController,
           decoration: InputDecoration(
-            labelText: "Password",
+            labelText: 'Password',
           ),
         ),
         RaisedButton(
@@ -40,7 +40,7 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
                 );
             Navigator.pop(context);
           },
-          child: Text("Sign in"),
+          child: Text('Sign in'),
         ),
         RaisedButton(
           onPressed: () {

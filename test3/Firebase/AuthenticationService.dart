@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
 class AuthenticationService {
-  final FirebaseAuth _firebaseAuth;
   AuthenticationService(this._firebaseAuth);
+  final FirebaseAuth _firebaseAuth;
 
   Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
 
@@ -25,7 +25,7 @@ class AuthenticationService {
   }
 
   Future<User> currentUser() async {
-    User testing_var = await _firebaseAuth.currentUser;
+    var testing_var = await _firebaseAuth.currentUser;
     if (testing_var == null) {
       debugPrint('debug: null returned');
       return null;

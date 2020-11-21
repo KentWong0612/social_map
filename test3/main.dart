@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'Firebase/AuthenticationService.dart';
-import 'SignInPage.dart';
 import 'camera_page.dart';
 import 'SettingPageTest.dart';
 import 'MapTest.dart';

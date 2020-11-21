@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:path/path.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,10 +12,11 @@ class SettingPageTest extends StatefulWidget {
   _SettingPageTestState createState() => _SettingPageTestState();
 }
 
+//TODO: implement refresh frequency
 class _SettingPageTestState extends State<SettingPageTest> {
   bool flag = true;
   SharedPreferences prefs;
-  final String timePeriod = "timePeriod";
+  final String timePeriod = 'timePeriod';
 
   Future<void> _signInWithEmailAndPassword(BuildContext context) async {
     final navigator = Navigator.of(context);
@@ -27,6 +27,7 @@ class _SettingPageTestState extends State<SettingPageTest> {
   @override
   void dispose() {
     debugPrint('setting idspose called');
+    super.dispose();
   }
 
   Widget accountTiles(BuildContext context) {

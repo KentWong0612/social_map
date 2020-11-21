@@ -13,7 +13,6 @@ class User extends Equatable {
     @required this.email,
     @required this.id,
     @required this.name,
-    @required this.firebaseUser,
   })  : assert(email != null),
         assert(id != null);
 
@@ -25,8 +24,6 @@ class User extends Equatable {
 
   /// The current user's name (display name).
   final String name;
-
-  final FirebaseUser firebaseUser;
 
   /// Url for the current user's photo.
 

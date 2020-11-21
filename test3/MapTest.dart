@@ -17,21 +17,10 @@ class MapTestScreen extends StatefulWidget {
 class _MapTestScreenState extends State<MapTestScreen> {
   GoogleMapController mapController;
 
-  //Marker List
+  //Marker List + User Marker + camera marker
   final List<Marker> _allMarkers = [];
-
-  //User Marker
   Marker userLocation;
-
-  //Test Marker and sharedpref
-  SharedPreferences prefs;
-  Marker _testerMarker;
-  final String prefLat = "prefLat";
-  final String prefLong = "prefLong";
-
-  //preset marker
-  final LatLng _hospital = const LatLng(22.458576, 113.995721);
-  final LatLng _home = const LatLng(22.470100, 113.998738);
+  Marker cameraMarker;
 
   //location tracker
   final Location _locationTracker = Location();
@@ -44,59 +33,124 @@ class _MapTestScreenState extends State<MapTestScreen> {
   );
 
   //Return marker with Latlng for event(not completed)
-  Marker createMarkerFromLatLng(LatLng location) {
+  Marker createMarkerFromLatLng(String markerID, LatLng location) {
     return Marker(
-      markerId: MarkerId('test'),
+      markerId: MarkerId(markerID),
       draggable: false,
       position: location,
+      onTap: () {
+        debugPrint('debug: ' + markerID + 'tapped');
+      },
     );
   }
 
-  //pre-set marker added to marker list
   @override
   void initState() {
     super.initState();
     //add marker into marker list
-    _allMarkers.add(Marker(
-      markerId: MarkerId('hospital'),
-      draggable: false,
-      position: _hospital,
-      onTap: () {
-        print('hospital tapped');
-      },
-    ));
-    _allMarkers.add(createMarkerFromLatLng(_home));
+
     if (userLocation != null) {
       _allMarkers.add(userLocation);
     }
-
+    inserttestingmarker();
     _getCurrentLocation();
+    _getScreenLocation();
     _loadDataFromSharedPreference();
   }
 
-  //testing section for sharedPreference
-  _loadDataFromSharedPreference() async {
+  //////////////////////////////////testing section for sharedPreference and marker//////////////////////////////////
+  //preset marker for testing purpose
+  final LatLng _hospital = const LatLng(22.458576, 113.995721);
+  final LatLng _kentHome = const LatLng(22.470100, 113.998738);
+
+  //move the fixed position
+  void _moveToHome() {
+    mapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: _kentHome, zoom: 15.0)));
+  }
+
+  //insert testingMarker to marker list
+  void inserttestingmarker() {
+    _allMarkers.add(createMarkerFromLatLng('hospital', _hospital));
+    _allMarkers.add(createMarkerFromLatLng('kent home', _kentHome));
+  }
+
+  //////////////////////////////////section end//////////////////////////////////
+
+  //sharedpref for saving home position
+  SharedPreferences prefs;
+  Marker home;
+  final String prefLat = 'prefLat';
+  final String prefLong = 'prefLong';
+
+  //load home position from device
+  void _loadDataFromSharedPreference() async {
     prefs = await SharedPreferences.getInstance();
     setState(() {
-      double tempLat = (prefs.getDouble(prefLat) ?? 22.447901);
-      double tempLong = (prefs.getDouble(prefLong) ?? 114.025432);
-      _testerMarker = createMarkerFromLatLng(LatLng(tempLat, tempLong));
+      var tempLat = (prefs.getDouble(prefLat) ?? 22.447901);
+      var tempLong = (prefs.getDouble(prefLong) ?? 114.025432);
+      home = createMarkerFromLatLng('home', LatLng(tempLat, tempLong));
     });
+    debugPrint('debug: loaded location ' + home.position.toString());
+    _allMarkers.add(home);
   }
 
-  _saveDataFromSharedPreference() async {
+  //save Current camera position as home position
+  void _saveDataToSharedPreference() async {
     prefs = await SharedPreferences.getInstance();
-    prefs.setDouble(prefLat, 22.468406);
-    prefs.setDouble(prefLong, 114.000176);
+    final screen_location = await _getScreenLocation();
+    await prefs.setDouble(prefLat, screen_location.latitude);
+    await prefs.setDouble(prefLong, screen_location.longitude);
+    debugPrint(
+        'debug: saved new location to device' + screen_location.toString());
+    //prefs.setDouble(prefLat, 22.468406);
+    //prefs.setDouble(prefLong, 114.000176);
   }
 
-  //move the camera to target
-  void _moveToTarget() {
-    _loadDataFromSharedPreference();
+  //move the camera to saved location
+  void _moveToSavedLocation() async {
+    await _loadDataFromSharedPreference();
+    debugPrint('debug: ' + 'moved to ' + home.position.toString());
     mapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: _testerMarker.position, zoom: 15.0)));
+        CameraPosition(target: home.position, zoom: 15.0)));
   }
-  //section end
+
+  //function to obtain camera position
+  Future<LatLng> _getScreenLocation() async {
+    var screenWidth = MediaQuery.of(context).size.width *
+        MediaQuery.of(context).devicePixelRatio;
+    var screenHeight = MediaQuery.of(context).size.height *
+        MediaQuery.of(context).devicePixelRatio;
+
+    var middleX = screenWidth / 2;
+    var middleY = screenHeight / 2;
+
+    var screenCoordinate =
+        ScreenCoordinate(x: middleX.round(), y: middleY.round());
+
+    var middlePoint = await mapController.getLatLng(screenCoordinate);
+    debugPrint('debug: _getScreenLocation ' + middlePoint.toString());
+    return middlePoint;
+  }
+
+  //function to place ScreenMarker
+  void _placeScreenMarker() async {
+    var screenWidth = MediaQuery.of(context).size.width *
+        MediaQuery.of(context).devicePixelRatio;
+    var screenHeight = MediaQuery.of(context).size.height *
+        MediaQuery.of(context).devicePixelRatio;
+
+    var middleX = screenWidth / 2;
+    var middleY = screenHeight / 2;
+
+    var screenCoordinate =
+        ScreenCoordinate(x: middleX.round(), y: middleY.round());
+
+    var middlePoint = await mapController.getLatLng(screenCoordinate);
+    debugPrint('debug: place screenMarker ' + middlePoint.toString());
+    cameraMarker = createMarkerFromLatLng('ScreenCenterMarker', middlePoint);
+    _allMarkers.add(cameraMarker);
+  }
 
   //set map controller
   void _onMapCreated(GoogleMapController controller) {
@@ -104,12 +158,7 @@ class _MapTestScreenState extends State<MapTestScreen> {
     _moveToCurrentLocation();
   }
 
-  //move the camera to home
-  void _moveToHome() {
-    mapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: _home, zoom: 15.0)));
-  }
-
+  //function to update user location
   void _updateMarker(LocationData newLocalData) {
     var newLocation = LatLng(newLocalData.latitude, newLocalData.longitude);
     setState(() {
@@ -124,6 +173,7 @@ class _MapTestScreenState extends State<MapTestScreen> {
     _allMarkers.add(userLocation);
   }
 
+  //function to obtain user location
   void _getCurrentLocation() async {
     try {
       var location = await _locationTracker.getLocation();
@@ -144,6 +194,7 @@ class _MapTestScreenState extends State<MapTestScreen> {
     }
   }
 
+  //function to move to user location
   void _moveToCurrentLocation() {
     if (mapController != null) {
       mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
@@ -184,8 +235,8 @@ class _MapTestScreenState extends State<MapTestScreen> {
         alignment: Alignment.bottomCenter,
         child: InkWell(
           onTap: () {
-            _moveToHome();
-            //_moveToTarget();
+            //_moveToHome();
+            _moveToSavedLocation();
           },
           child: Container(
             height: 40.0,
@@ -208,21 +259,20 @@ class _MapTestScreenState extends State<MapTestScreen> {
           child: Icon(Icons.my_location),
         ),
       ),
-      //testing function button section
       Align(
         alignment: Alignment.topLeft,
         child: FloatingActionButton(
           onPressed: () {
-            _moveToTarget();
+            _placeScreenMarker();
           },
-          child: Icon(Icons.restaurant),
+          child: Icon(Icons.center_focus_strong),
         ),
       ),
       Align(
         alignment: Alignment.topRight,
         child: FloatingActionButton(
           onPressed: () {
-            _saveDataFromSharedPreference();
+            _saveDataToSharedPreference();
           },
           child: Icon(Icons.save),
         ),
