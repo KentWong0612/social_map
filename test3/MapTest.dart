@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,7 +8,8 @@ import 'package:location/location.dart';
 import 'Event.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-//target 1: implement setHome function
+//TODO: insert test event and create marker from evernt
+//LOGIC: read event data from database and create a marker corresponding to the event with event ID == marker ID
 
 class MapTestScreen extends StatefulWidget {
   @override
@@ -58,7 +60,7 @@ class _MapTestScreenState extends State<MapTestScreen> {
     _loadDataFromSharedPreference();
   }
 
-  //////////////////////////////////testing section for sharedPreference and marker//////////////////////////////////
+  //////////////////////////////////Section for testing marker//////////////////////////////////
   //preset marker for testing purpose
   final LatLng _hospital = const LatLng(22.458576, 113.995721);
   final LatLng _kentHome = const LatLng(22.470100, 113.998738);
@@ -75,6 +77,26 @@ class _MapTestScreenState extends State<MapTestScreen> {
     _allMarkers.add(createMarkerFromLatLng('kent home', _kentHome));
   }
 
+  //testing event
+  //suppose database return a list of event
+  Event basketballMatch = Event(
+      LatLng(22.465942018277172, 114.00185947335554),
+      'basketballMatch',
+      [false, true, false],
+      'this is a basketball match',
+      [false, true, false]);
+
+  //create marker out of event
+  Marker createMarkerFromEvent(Event event) {
+    return Marker(
+      markerId: MarkerId(event.eventName),
+      draggable: false,
+      position: event.eventLocation,
+      onTap: () {
+        debugPrint('debug: ' + event.eventName + 'tapped');
+      },
+    );
+  }
   //////////////////////////////////section end//////////////////////////////////
 
   //sharedpref for saving home position
