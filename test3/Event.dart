@@ -1,5 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+//TODO: eventTvalidTime or EventexpireTime
 //event class type to store necessary info
 class Event {
   LatLng eventLocation;

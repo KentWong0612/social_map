@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -22,7 +20,7 @@ class _MapTestScreenState extends State<MapTestScreen> {
   //Marker List + User Marker + camera marker
   final List<Marker> _allMarkers = [];
   Marker userLocation;
-  Marker cameraMarker;
+  Marker screenMarker;
 
   //location tracker
   final Location _locationTracker = Location();
@@ -64,12 +62,6 @@ class _MapTestScreenState extends State<MapTestScreen> {
   //preset marker for testing purpose
   final LatLng _hospital = const LatLng(22.458576, 113.995721);
   final LatLng _kentHome = const LatLng(22.470100, 113.998738);
-
-  //move the fixed position
-  void _moveToHome() {
-    mapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: _kentHome, zoom: 15.0)));
-  }
 
   //insert testingMarker to marker list
   void inserttestingmarker() {
@@ -125,8 +117,6 @@ class _MapTestScreenState extends State<MapTestScreen> {
     await prefs.setDouble(prefLong, screen_location.longitude);
     debugPrint(
         'debug: saved new location to device' + screen_location.toString());
-    //prefs.setDouble(prefLat, 22.468406);
-    //prefs.setDouble(prefLong, 114.000176);
   }
 
   //move the camera to saved location
@@ -139,20 +129,7 @@ class _MapTestScreenState extends State<MapTestScreen> {
 
   //function to obtain camera position
   Future<LatLng> _getScreenLocation() async {
-    var screenWidth = MediaQuery.of(context).size.width *
-        MediaQuery.of(context).devicePixelRatio;
-    var screenHeight = MediaQuery.of(context).size.height *
-        MediaQuery.of(context).devicePixelRatio;
-
-    var middleX = screenWidth / 2;
-    var middleY = screenHeight / 2;
-
-    var screenCoordinate =
-        ScreenCoordinate(x: middleX.round(), y: middleY.round());
-
-    var middlePoint = await mapController.getLatLng(screenCoordinate);
-    debugPrint('debug: _getScreenLocation ' + middlePoint.toString());
-    return middlePoint;
+    return screenMarker.position;
   }
 
   //function to place ScreenMarker
@@ -170,8 +147,21 @@ class _MapTestScreenState extends State<MapTestScreen> {
 
     var middlePoint = await mapController.getLatLng(screenCoordinate);
     debugPrint('debug: place screenMarker ' + middlePoint.toString());
-    cameraMarker = createMarkerFromLatLng('ScreenCenterMarker', middlePoint);
-    _allMarkers.add(cameraMarker);
+    screenMarker = Marker(
+      markerId: MarkerId('ScreenCenterMarker'),
+      draggable: true,
+      onDragEnd: ((newPosition) {
+        print(newPosition);
+        print(screenMarker.position);
+        screenMarker =
+            createMarkerFromLatLng('ScreenCenterMarker', newPosition);
+      }),
+      position: middlePoint,
+      onTap: () {
+        debugPrint('debug: ' + 'ScreenCenterMarker' + 'tapped');
+      },
+    );
+    _allMarkers.add(screenMarker);
   }
 
   //set map controller
