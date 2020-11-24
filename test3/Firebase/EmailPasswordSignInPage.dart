@@ -42,12 +42,6 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
           },
           child: Text('Sign in'),
         ),
-        RaisedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text('Go back!'),
-        ),
       ]),
     );
   }

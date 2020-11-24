@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'AuthenticationService.dart';
@@ -45,18 +44,12 @@ class _ChangeNamePageState extends State<ChangeNamePage> {
           onPressed: () {
             firebaseUser.updateProfile(
                 displayName: displaynameController.text.trim());
-            Navigator.pop(context);
             debugPrint('debug: displayname texted ' +
                 displaynameController.text.trim());
             context.read<AuthenticationService>().signOut();
-          },
-          child: Text('Submit'),
-        ),
-        RaisedButton(
-          onPressed: () {
             Navigator.pop(context);
           },
-          child: Text('Go back!'),
+          child: Text('Submit'),
         ),
       ]),
     );

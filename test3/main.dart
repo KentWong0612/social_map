@@ -43,47 +43,6 @@ class _HomePageState extends State<HomePage> {
       child: MaterialApp(
         //insert auth service before materialapp
         home: AuthenticationWrapper(),
-        /*
-        home: DefaultTabController(
-          length: 3,
-          child: Scaffold(
-            appBar: AppBar(
-              bottom: TabBar(
-                tabs: [
-                  Tab(
-                    icon: Icon(Icons.map),
-                    text: 'MapTest',
-                  ),
-                  Tab(
-                    icon: Icon(Icons.camera),
-                    text: 'Camera',
-                  ),
-                  Tab(
-                    icon: Icon(Icons.settings),
-                    text: 'Setting',
-                  ),
-                ],
-              ),
-              title: searchBar,
-              actions: [
-                //IconButton(icon: searchIcon, onPressed: _pushSearch),
-                IconButton(
-                    icon: Icon(Icons.search),
-                    onPressed: () {
-                      showSearch(context: context, delegate: DataSearch());
-                    })
-              ],
-            ),
-            body: TabBarView(
-              physics: NeverScrollableScrollPhysics(),
-              children: [
-                MapTestScreen(),
-                CameraScreen(),
-                SettingPageTest(),
-              ],
-            ),
-          ),
-        ),*/
       ),
     );
   }
@@ -95,93 +54,49 @@ class AuthenticationWrapper extends StatelessWidget {
     Widget searchBar = Text('Social Map');
 
     final firebaseUser = context.watch<User>();
-
     if (firebaseUser != null) {
       debugPrint(firebaseUser.email);
-      return DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          appBar: AppBar(
-            bottom: TabBar(
-              tabs: [
-                Tab(
-                  icon: Icon(Icons.map),
-                  text: 'MapTest',
-                ),
-                Tab(
-                  icon: Icon(Icons.camera),
-                  text: 'Camera',
-                ),
-                Tab(
-                  icon: Icon(Icons.settings),
-                  text: 'Setting',
-                ),
-              ],
-            ),
-            title: searchBar,
-            actions: [
-              //IconButton(icon: searchIcon, onPressed: _pushSearch),
-              IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () {
-                    showSearch(context: context, delegate: DataSearch());
-                  })
-            ],
-          ),
-          body: TabBarView(
-            physics: NeverScrollableScrollPhysics(),
-            children: [
-              MapTestScreen(),
-              CameraScreen(),
-              SettingPageTest(),
-            ],
-          ),
-        ),
-      );
-    } else {
-      debugPrint('it is null');
-      //return SignInPage();
-      return DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          appBar: AppBar(
-            bottom: TabBar(
-              tabs: [
-                Tab(
-                  icon: Icon(Icons.map),
-                  text: 'MapTest',
-                ),
-                Tab(
-                  icon: Icon(Icons.camera),
-                  text: 'Camera',
-                ),
-                Tab(
-                  icon: Icon(Icons.settings),
-                  text: 'Setting',
-                ),
-              ],
-            ),
-            title: searchBar,
-            actions: [
-              //IconButton(icon: searchIcon, onPressed: _pushSearch),
-              IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () {
-                    showSearch(context: context, delegate: DataSearch());
-                  })
-            ],
-          ),
-          body: TabBarView(
-            physics: NeverScrollableScrollPhysics(),
-            children: [
-              MapTestScreen(),
-              CameraScreen(),
-              SettingPageTest(),
-            ],
-          ),
-        ),
-      );
     }
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          bottom: TabBar(
+            tabs: [
+              Tab(
+                icon: Icon(Icons.map),
+                text: 'MapTest',
+              ),
+              Tab(
+                icon: Icon(Icons.camera),
+                text: 'Camera',
+              ),
+              Tab(
+                icon: Icon(Icons.settings),
+                text: 'Setting',
+              ),
+            ],
+          ),
+          title: searchBar,
+          actions: [
+            //IconButton(icon: searchIcon, onPressed: _pushSearch),
+            IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  showSearch(context: context, delegate: DataSearch());
+                })
+          ],
+        ),
+        body: TabBarView(
+          physics: NeverScrollableScrollPhysics(),
+          children: [
+            MapTestScreen(),
+            CameraScreen(),
+            SettingPageTest(),
+          ],
+        ),
+      ),
+    );
   }
 }
 

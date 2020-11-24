@@ -1,13 +1,12 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'Event.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-//TODO: insert test event and create marker from evernt
-//LOGIC: read event data from database and create a marker corresponding to the event with event ID == marker ID
 
 class MapTestScreen extends StatefulWidget {
   @override
@@ -16,7 +15,7 @@ class MapTestScreen extends StatefulWidget {
 
 class _MapTestScreenState extends State<MapTestScreen> {
   GoogleMapController mapController;
-
+  var firebaseUser;
   //Marker List + User Marker + camera marker
   final List<Marker> _allMarkers = [];
   Marker userLocation;
@@ -67,6 +66,7 @@ class _MapTestScreenState extends State<MapTestScreen> {
   void inserttestingmarker() {
     _allMarkers.add(createMarkerFromLatLng('hospital', _hospital));
     _allMarkers.add(createMarkerFromLatLng('kent home', _kentHome));
+    _allMarkers.add(createMarkerFromEvent(basketballMatch));
   }
 
   //testing event
@@ -85,7 +85,7 @@ class _MapTestScreenState extends State<MapTestScreen> {
       draggable: false,
       position: event.eventLocation,
       onTap: () {
-        debugPrint('debug: ' + event.eventName + 'tapped');
+        debugPrint('debug: ' + event.eventName + ' tapped');
       },
     );
   }
@@ -232,64 +232,149 @@ class _MapTestScreenState extends State<MapTestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      Container(
-        child: GoogleMap(
-          onMapCreated: _onMapCreated,
-          compassEnabled: true,
-          zoomGesturesEnabled: true,
-          rotateGesturesEnabled: true,
-          initialCameraPosition: initialLocation,
-          markers: Set.from(_allMarkers),
+    firebaseUser = context.watch<User>();
+
+    if (firebaseUser == null) {
+      return Stack(children: [
+        Container(
+          child: GoogleMap(
+            onMapCreated: _onMapCreated,
+            compassEnabled: true,
+            zoomGesturesEnabled: true,
+            rotateGesturesEnabled: true,
+            initialCameraPosition: initialLocation,
+            markers: Set.from(_allMarkers),
+          ),
         ),
-      ),
-      Align(
-        alignment: Alignment.bottomCenter,
-        child: InkWell(
-          onTap: () {
-            //_moveToHome();
-            _moveToSavedLocation();
-          },
-          child: Container(
-            height: 40.0,
-            width: 40.0,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20.0), color: Colors.blue),
-            child: Icon(
-              Icons.home,
-              color: Colors.white,
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: InkWell(
+            onTap: () {
+              //_moveToHome();
+              _moveToSavedLocation();
+            },
+            child: Container(
+              height: 40.0,
+              width: 40.0,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.0),
+                  color: Colors.blue),
+              child: Icon(
+                Icons.home,
+                color: Colors.white,
+              ),
             ),
           ),
         ),
-      ),
-      Align(
-        alignment: Alignment.bottomLeft,
-        child: FloatingActionButton(
-          onPressed: () {
-            _moveToCurrentLocation();
-          },
-          child: Icon(Icons.my_location),
+        Align(
+          alignment: Alignment.bottomLeft,
+          child: FloatingActionButton(
+            onPressed: () {
+              _moveToCurrentLocation();
+            },
+            child: Icon(Icons.my_location),
+          ),
         ),
-      ),
-      Align(
-        alignment: Alignment.topLeft,
-        child: FloatingActionButton(
-          onPressed: () {
-            _placeScreenMarker();
-          },
-          child: Icon(Icons.center_focus_strong),
+        Align(
+          alignment: Alignment.topLeft,
+          child: FloatingActionButton(
+            onPressed: () {
+              _placeScreenMarker();
+            },
+            child: Icon(Icons.center_focus_strong),
+          ),
         ),
-      ),
-      Align(
-        alignment: Alignment.topRight,
-        child: FloatingActionButton(
-          onPressed: () {
-            _saveDataToSharedPreference();
-          },
-          child: Icon(Icons.save),
+        Align(
+          alignment: Alignment.topRight,
+          child: FloatingActionButton(
+            onPressed: () {
+              _saveDataToSharedPreference();
+            },
+            child: Icon(Icons.save),
+          ),
         ),
-      ),
-      //testing function button section end
-    ]);
+        //testing function button section end
+      ]);
+    } else {
+      return Stack(children: [
+        Container(
+          child: GoogleMap(
+            onMapCreated: _onMapCreated,
+            compassEnabled: true,
+            zoomGesturesEnabled: true,
+            rotateGesturesEnabled: true,
+            initialCameraPosition: initialLocation,
+            markers: Set.from(_allMarkers),
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: InkWell(
+            onTap: () {
+              //_moveToHome();
+              _moveToSavedLocation();
+            },
+            child: Container(
+              height: 40.0,
+              width: 40.0,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.0),
+                  color: Colors.blue),
+              child: Icon(
+                Icons.home,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomLeft,
+          child: FloatingActionButton(
+            onPressed: () {
+              _moveToCurrentLocation();
+            },
+            child: Icon(Icons.my_location),
+          ),
+        ),
+        Align(
+          alignment: Alignment.topLeft,
+          child: FloatingActionButton(
+            onPressed: () {
+              _placeScreenMarker();
+            },
+            child: Icon(Icons.center_focus_strong),
+          ),
+        ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: InkWell(
+            onTap: () {
+              debugPrint('hi tapped');
+            },
+            child: Container(
+              height: 40.0,
+              width: 40.0,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.0),
+                  color: Colors.blue),
+              child: Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.topRight,
+          child: FloatingActionButton(
+            onPressed: () {
+              _saveDataToSharedPreference();
+            },
+            child: Icon(Icons.save),
+          ),
+        ),
+        //testing function button section end
+      ]);
+    }
   }
 }
