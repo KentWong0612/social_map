@@ -1,13 +1,30 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'addEventPage.dart';
-import 'MapEvent.dart';
+import '../MapEvent.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MaterialApp(
+      home: Scaffold(
+    appBar: AppBar(
+      title: const Text('Map Test'),
+    ),
+    body: MapTestScreen(),
+    floatingActionButton: FloatingActionButton(
+      tooltip: 'Increment Counter',
+      onPressed: () {},
+      child: const Icon(Icons.add),
+    ),
+  )));
+}
 
 class MapTestScreen extends StatefulWidget {
   @override
@@ -20,7 +37,7 @@ class _MapTestScreenState extends State<MapTestScreen> {
   //Marker List + User Marker + camera marker
   final List<Marker> _allMarkers = [];
   Marker userLocation;
-  Marker screenMarker = Marker();
+  Marker screenMarker;
 
   //location tracker
   final Location _locationTracker = Location();
@@ -124,8 +141,8 @@ class _MapTestScreenState extends State<MapTestScreen> {
   //move the camera to saved location
   void _moveToSavedLocation() async {
     await _loadDataFromSharedPreference();
-    debugPrint('debug: ' + 'moved to ' + home.position.toString());
-    mapController.animateCamera(CameraUpdate.newCameraPosition(
+    debugPrint('debug: moved to ' + home.position.toString());
+    await mapController.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(target: home.position, zoom: 15.0)));
   }
 
@@ -160,7 +177,7 @@ class _MapTestScreenState extends State<MapTestScreen> {
       }),
       position: middlePoint,
       onTap: () {
-        debugPrint('debug: ' + 'ScreenCenterMarker' + 'tapped');
+        debugPrint('debug: ScreenCenterMarker tapped');
       },
     );
     _allMarkers.add(screenMarker);
@@ -230,17 +247,6 @@ class _MapTestScreenState extends State<MapTestScreen> {
   void dispose() {
     debugPrint('map dispose called');
     super.dispose();
-  }
-
-  Future<void> _addEvent(BuildContext context) async {
-    if (screenMarker.position != null) {
-      final navigator = Navigator.of(context);
-      await navigator.push(MaterialPageRoute(
-          builder: (context) => AddEventPage(screenMarker.position)));
-    } else {
-      //TODO: pop warning place screen marker
-      print('screen marker not placed yet');
-    }
   }
 
   @override
@@ -363,7 +369,6 @@ class _MapTestScreenState extends State<MapTestScreen> {
           child: InkWell(
             onTap: () {
               debugPrint('hi tapped');
-              _addEvent(context);
             },
             child: Container(
               height: 40.0,

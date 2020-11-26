@@ -44,7 +44,6 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     });
   }
-  //firebaseDB.child("table1") = open table1, if not exist, create it
 
   @override
   void dispose() {
@@ -142,10 +141,34 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _getEventData() {
-    fireBaseDB.child('event').once().then((DataSnapshot snapshot) {
-      print(snapshot.value);
+  //TODO: change then into await
+  List<Map> testinglist = [];
+  Future<void> _getEventData() async {
+    testinglist.clear();
+    debugPrint('right after clear');
+    print(testinglist.length);
+    await fireBaseDB.child('event').once().then((DataSnapshot snapshot) {
+      Map map = snapshot.value;
+      map.keys.toList().forEach((element) {
+        fireBaseDB
+            .child('event')
+            .child(element)
+            .once()
+            .then((DataSnapshot innersnapshot) async {
+          await testinglist.add(innersnapshot.value);
+          debugPrint('after entering');
+          print(testinglist.length);
+        });
+      });
     });
+    await debugPrint('end entering');
+    await print(testinglist.length);
+    await debugPrint('end');
+  }
+
+  void _checkingLength() {
+    debugPrint('Lets check the length');
+    print(testinglist.length);
   }
 
   @override
@@ -191,8 +214,17 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               new RaisedButton(
                 child: new Text("print data"),
-                onPressed: _getEventData,
+                onPressed: () {
+                  debugPrint('before entering');
+                  print(testinglist.length);
+                  _getEventData();
+                },
                 color: Colors.teal,
+              ),
+              new RaisedButton(
+                child: new Text("check length"),
+                onPressed: _checkingLength,
+                color: Colors.redAccent,
               ),
               new Text("userName: ${userName} userSubject: ${userSubject}",
                   style:

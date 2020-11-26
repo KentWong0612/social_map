@@ -8,13 +8,13 @@ import 'Firebase/EmailPasswordSignInPage.dart';
 import 'package:provider/provider.dart';
 
 //implement update frequency setting
-class SettingPageTest extends StatefulWidget {
+class SettingPage extends StatefulWidget {
   @override
-  _SettingPageTestState createState() => _SettingPageTestState();
+  SettingPageState createState() => SettingPageState();
 }
 
 //TODO: implement refresh frequency
-class _SettingPageTestState extends State<SettingPageTest> {
+class SettingPageState extends State<SettingPage> {
   bool flag = true;
   SharedPreferences prefs;
   final String timePeriod = 'timePeriod';

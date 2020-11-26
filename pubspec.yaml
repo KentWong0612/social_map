@@ -43,7 +43,7 @@ dependencies:
   firebase_auth: ^0.18.3
   flushbar: ^1.10.4
   firebase_database: 
-  
+  multiselect_formfield: ^0.1.5
 
 dev_dependencies:
   flutter_test:

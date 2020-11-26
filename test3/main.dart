@@ -2,11 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'Firebase/AuthenticationService.dart';
 import 'camera_page.dart';
-import 'SettingPageTest.dart';
+import 'SettingPage.dart';
 import 'MapTest.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+//TODO: changed authservice.dart ge user from cutom to firebase one, test if login still work
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -92,7 +93,7 @@ class AuthenticationWrapper extends StatelessWidget {
           children: [
             MapTestScreen(),
             CameraScreen(),
-            SettingPageTest(),
+            SettingPage(),
           ],
         ),
       ),

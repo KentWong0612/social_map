@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 
 /// {@template user}
@@ -7,6 +6,7 @@ import 'package:meta/meta.dart';
 ///
 /// [User.empty] represents an unauthenticated user.
 /// {@endtemplate}
+/// TODO: if this needed?
 class User extends Equatable {
   /// {@macro user}
   const User({

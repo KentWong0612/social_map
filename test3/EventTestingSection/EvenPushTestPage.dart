@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'Event.dart';
+import '../MapEvent.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 void main() => runApp(MyApp());

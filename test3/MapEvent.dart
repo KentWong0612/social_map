@@ -1,8 +1,12 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 //TODO: eventTvalidTime or EventexpireTime
+//TODO: add an eventAdress <String>
+//TODO: category by form
+//TODO: category by nature
 //event class type to store necessary info
-class Event {
+//TODO: list bool -> list int such that 2 = major 1= minor 0 = not
+class MapEvent {
   LatLng eventLocation;
   //Latlng info
   String eventName;
@@ -11,7 +15,8 @@ class Event {
   //TODO: implement a function computed event id from database
   String eventHost;
   //Problem: current auth service store no user name, need a table to store user name
-  List<bool> eventCatagory;
+  List<bool> eventNature;
+  List<bool> eventForm;
   //User selected in apps, multi-select available, Idea [0] = NightLife, [1] = food
   //TODO: need to design the category
   String eventDescription;
@@ -29,16 +34,22 @@ class Event {
 
   //constructor
   //TODO: add assert function
-  Event(LatLng _eventLocation, String _eventName, List<bool> _eventCatagory,
-      String _eventDescription, List<bool> _targetAgeRange) {
+  MapEvent(
+      LatLng _eventLocation,
+      String _eventName,
+      List<bool> _eventNature,
+      List<bool> _eventForm,
+      String _eventDescription,
+      List<bool> _targetAgeRange) {
     eventLocation = _eventLocation;
     eventName = _eventName;
-    eventCatagory = _eventCatagory;
+    eventNature = _eventNature;
+    eventForm = _eventForm;
     eventDescription = _eventDescription;
     targetAgeRange = _targetAgeRange;
   }
 
-  Event.fromFirebase(Map<dynamic, dynamic> json) {
+  MapEvent.fromFirebase(Map<dynamic, dynamic> json) {
     eventDescription = json['eventDescription'];
     eventHost = json['eventHost'];
     eventName = json['eventName'];
