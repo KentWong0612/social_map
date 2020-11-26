@@ -8,16 +8,33 @@ import 'package:provider/provider.dart';
 import 'addEventPageTest.dart';
 
 class EventTableFromDB extends ChangeNotifier {
-  final DatabaseReference firebaseDB = FirebaseDatabase.instance.reference();
+  DatabaseReference firebaseDB;
 
-  List<MapEvent> mapEventList;
+  //List<MapEvent> mapEventList;
 
-  EventTableFromDB() {
+  List<Map> testinglist = [];
+  EventTableFromDB(DatabaseReference this.firebaseDB) {
+    testinglist.clear();
+    debugPrint('right after clear');
+    print(testinglist.length);
     firebaseDB.child('event').once().then((DataSnapshot snapshot) {
-      var sthReturned = snapshot.value;
-      debugPrint('Trying to print out data obtained from DB');
-      print(sthReturned);
+      Map map = snapshot.value;
+      map.keys.toList().forEach((element) {
+        firebaseDB
+            .child('event')
+            .child(element)
+            .once()
+            .then((DataSnapshot innersnapshot) {
+          testinglist.add(innersnapshot.value);
+          debugPrint('after entering');
+          print(testinglist.length);
+        });
+      });
     });
+    debugPrint('end entering');
+    print(testinglist.length);
+    debugPrint('end');
+    notifyListeners();
   }
 
   @override
@@ -43,6 +60,8 @@ class ReadDataBasePage extends StatefulWidget {
 
 class _ReadDataBasePageState extends State<ReadDataBasePage> {
   final DatabaseReference fireBaseDB = FirebaseDatabase.instance.reference();
+  String eventname = '';
+  String eventhost = '';
 
   @override
   void initState() {
@@ -51,15 +70,51 @@ class _ReadDataBasePageState extends State<ReadDataBasePage> {
   }
 
   Future<void> _addEvent(BuildContext context) async {
-    final navigator = Navigator.of(context);
-    await navigator.push(MaterialPageRoute(
-        builder: (context) => AddEventPage(LatLng(123.0, 321.0))));
+    final navigator2 = Navigator.of(context);
+    await navigator2.push(MaterialPageRoute(
+        builder: (context) =>
+            AddEventPageTest(LatLng(22.470412589523242, 113.99946647258345))));
+  }
+
+  //TODO: change then into await
+  List<Map> testinglist = [];
+  Future<void> _getEventData() async {
+    testinglist.clear();
+    debugPrint('right after clear');
+    print(testinglist.length);
+    var snapshot2 = await fireBaseDB.child('event').once();
+    Map map2 = snapshot2.value;
+    for (var element in map2.keys.toList()) {
+      final innersnapshot =
+          await fireBaseDB.child('event').child(element).once();
+      testinglist.add(innersnapshot.value);
+      debugPrint('after entering');
+      print(testinglist.length);
+    }
+    debugPrint('end entering');
+    print(testinglist.length);
+    debugPrint('end');
+    print(testinglist[1]);
+    _get1stEventIntoVar();
+  }
+
+  void _get1stEventIntoVar() {
+    if (testinglist.isEmpty == true) {
+      print('data is not in yet');
+    } else {
+      setState(() {
+        eventname = testinglist[1]['eventName'];
+        eventhost = testinglist[1]['eventHost'];
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<EventTableFromDB>(
-        create: (BuildContext context) {},
+        create: (BuildContext context) {
+          EventTableFromDB(fireBaseDB);
+        },
         child: Scaffold(
             appBar: AppBar(
               title: Text('Testing Event function related DB'),
@@ -72,43 +127,20 @@ class _ReadDataBasePageState extends State<ReadDataBasePage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   RaisedButton(
-                    child: Text('SET'),
+                    child: Text('Push new event'),
                     color: Colors.redAccent,
                     onPressed: () {
                       _addEvent(context);
                     },
                   ),
                   RaisedButton(
-                    child: Text('PUSH'),
+                    child: Text('get evenb Data'),
                     color: Colors.teal,
-                    onPressed: () {},
+                    onPressed: () {
+                      _getEventData();
+                    },
                   ),
-                  RaisedButton(
-                    child: Text('UPDATE'),
-                    color: Colors.amber,
-                    onPressed: () {},
-                  ),
-                  RaisedButton(
-                    child: Text('DELETE'),
-                    color: Colors.greenAccent,
-                    onPressed: () {},
-                  ),
-                  RaisedButton(
-                    child: Text('Fetch'),
-                    color: Colors.indigoAccent,
-                    onPressed: () {},
-                  ),
-                  RaisedButton(
-                    child: Text('Remove Major'),
-                    color: Colors.redAccent,
-                    onPressed: () {},
-                  ),
-                  RaisedButton(
-                    child: Text('print data'),
-                    color: Colors.teal,
-                    onPressed: () {},
-                  ),
-                  Text('userName:  userSubject: ',
+                  Text('eventName:${eventname}  eventhost:${eventhost} ',
                       style:
                           TextStyle(fontSize: 24, fontWeight: FontWeight.bold))
                 ],

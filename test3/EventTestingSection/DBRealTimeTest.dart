@@ -147,28 +147,24 @@ class _MyHomePageState extends State<MyHomePage> {
     testinglist.clear();
     debugPrint('right after clear');
     print(testinglist.length);
-    await fireBaseDB.child('event').once().then((DataSnapshot snapshot) {
-      Map map = snapshot.value;
-      map.keys.toList().forEach((element) {
-        fireBaseDB
-            .child('event')
-            .child(element)
-            .once()
-            .then((DataSnapshot innersnapshot) async {
-          await testinglist.add(innersnapshot.value);
-          debugPrint('after entering');
-          print(testinglist.length);
-        });
-      });
+    var snapshot2 = await fireBaseDB.child('event').once();
+    Map map2 = snapshot2.value;
+    await map2.keys.toList().forEach((element) async {
+      final innersnapshot =
+          await fireBaseDB.child('event').child(element).once();
+      testinglist.add(innersnapshot.value);
+      debugPrint('after entering');
+      print(testinglist.length);
     });
-    await debugPrint('end entering');
-    await print(testinglist.length);
-    await debugPrint('end');
+    debugPrint('end entering');
+    print(testinglist.length);
+    debugPrint('end');
   }
 
   void _checkingLength() {
     debugPrint('Lets check the length');
     print(testinglist.length);
+    print(testinglist[0]['eventName']);
   }
 
   @override

@@ -20,7 +20,7 @@ class _MapTestScreenState extends State<MapTestScreen> {
   //Marker List + User Marker + camera marker
   final List<Marker> _allMarkers = [];
   Marker userLocation;
-  Marker screenMarker = Marker();
+  Marker screenMarker;
 
   //location tracker
   final Location _locationTracker = Location();
@@ -232,14 +232,15 @@ class _MapTestScreenState extends State<MapTestScreen> {
     super.dispose();
   }
 
+//TODO: test with fixed value first
   Future<void> _addEvent(BuildContext context) async {
-    if (screenMarker.position != null) {
+    if (screenMarker != null) {
+      print(screenMarker.position);
       final navigator = Navigator.of(context);
       await navigator.push(MaterialPageRoute(
           builder: (context) => AddEventPage(screenMarker.position)));
     } else {
-      //TODO: pop warning place screen marker
-      print('screen marker not placed yet');
+      print('place the screeen marker first');
     }
   }
 
@@ -282,6 +283,7 @@ class _MapTestScreenState extends State<MapTestScreen> {
         Align(
           alignment: Alignment.bottomLeft,
           child: FloatingActionButton(
+            heroTag: 'move button visitor',
             onPressed: () {
               _moveToCurrentLocation();
             },
@@ -291,6 +293,7 @@ class _MapTestScreenState extends State<MapTestScreen> {
         Align(
           alignment: Alignment.topLeft,
           child: FloatingActionButton(
+            heroTag: 'place button visitor',
             onPressed: () {
               _placeScreenMarker();
             },
@@ -300,6 +303,7 @@ class _MapTestScreenState extends State<MapTestScreen> {
         Align(
           alignment: Alignment.topRight,
           child: FloatingActionButton(
+            heroTag: 'save button visitor',
             onPressed: () {
               _saveDataToSharedPreference();
             },
@@ -324,7 +328,6 @@ class _MapTestScreenState extends State<MapTestScreen> {
           alignment: Alignment.bottomCenter,
           child: InkWell(
             onTap: () {
-              //_moveToHome();
               _moveToSavedLocation();
             },
             child: Container(
@@ -343,6 +346,7 @@ class _MapTestScreenState extends State<MapTestScreen> {
         Align(
           alignment: Alignment.bottomLeft,
           child: FloatingActionButton(
+            heroTag: 'move button',
             onPressed: () {
               _moveToCurrentLocation();
             },
@@ -352,6 +356,7 @@ class _MapTestScreenState extends State<MapTestScreen> {
         Align(
           alignment: Alignment.topLeft,
           child: FloatingActionButton(
+            heroTag: 'palce button',
             onPressed: () {
               _placeScreenMarker();
             },
@@ -360,27 +365,19 @@ class _MapTestScreenState extends State<MapTestScreen> {
         ),
         Align(
           alignment: Alignment.topCenter,
-          child: InkWell(
-            onTap: () {
-              debugPrint('hi tapped');
+          child: FloatingActionButton(
+            heroTag: 'add button',
+            onPressed: () {
+              debugPrint('add Event');
               _addEvent(context);
             },
-            child: Container(
-              height: 40.0,
-              width: 40.0,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20.0),
-                  color: Colors.blue),
-              child: Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
-            ),
+            child: Icon(Icons.add),
           ),
         ),
         Align(
           alignment: Alignment.topRight,
           child: FloatingActionButton(
+            heroTag: 'save button',
             onPressed: () {
               _saveDataToSharedPreference();
             },

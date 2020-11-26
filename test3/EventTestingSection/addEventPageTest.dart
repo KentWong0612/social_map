@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:multiselect_formfield/multiselect_formfield.dart';
 
-class AddEventPage extends StatefulWidget {
+class AddEventPageTest extends StatefulWidget {
   final LatLng locationIn;
-  const AddEventPage(this.locationIn);
+  const AddEventPageTest(this.locationIn);
+
   @override
   _AddEventPageState createState() => _AddEventPageState();
 }
 
-class _AddEventPageState extends State<AddEventPage> {
+class _AddEventPageState extends State<AddEventPageTest> {
   final DatabaseReference firebaseDB = FirebaseDatabase.instance.reference();
   final TextEditingController eventNameController = TextEditingController();
   final TextEditingController eventAddressController = TextEditingController();
@@ -37,8 +38,8 @@ class _AddEventPageState extends State<AddEventPage> {
   }
 
   void _saveToNature() {
-    debugPrint('_saveToNature');
-    print(eventNatureListpart);
+    //debugPrint('_saveToNature');
+    //print(eventNatureListpart);
     eventNatureListpart.clear();
     if (eventNatureList.contains('nightlife')) {
       eventNatureListpart['nighlife'] = true;
@@ -90,12 +91,12 @@ class _AddEventPageState extends State<AddEventPage> {
     } else {
       eventNatureListpart['style'] = false;
     }
-    print(eventNatureListpart);
+    //print(eventNatureListpart);
   }
 
   void _saveToForm() {
-    debugPrint('_saveToForm');
-    print(eventFormListpart);
+    //debugPrint('_saveToForm');
+    //print(eventFormListpart);
     eventFormListpart.clear();
     if (eventFormList.contains('show')) {
       eventFormListpart['show'] = true;
@@ -147,7 +148,7 @@ class _AddEventPageState extends State<AddEventPage> {
     } else {
       eventFormListpart['class'] = false;
     }
-    print(eventFormListpart);
+    //print(eventFormListpart);
   }
 
   void _pushEvent() {
@@ -159,30 +160,30 @@ class _AddEventPageState extends State<AddEventPage> {
     };
     //TODO: pass location in
     Map<String, double> part2 = {
-      'lattitude': 1234.0,
-      'longitude': 4321.0,
+      'lattitude': widget.locationIn.latitude,
+      'longitude': widget.locationIn.longitude,
     };
     Map<String, Map<String, bool>> part3 = {
       'eventNature': eventNatureListpart,
       'eventForm': eventFormListpart,
     };
     DatabaseReference pushEventDB = firebaseDB.child('event').push();
-    debugPrint('check har event');
-    //print(part1);
+    debugPrint('checking before pushing');
+    print(part1);
     print(part2);
     print(part3);
     pushEventDB.set(part1).whenComplete(() {
-      print('event pushed please check');
+      print('part1 of event please check');
     }).catchError((error) {
       print(error);
     });
     pushEventDB.update(part2).whenComplete(() {
-      print('other part of event pushed please check');
+      print('part2 of event pushed please check');
     }).catchError((error) {
       print(error);
     });
     pushEventDB.update(part3).whenComplete(() {
-      print('other part of event pushed please check');
+      print('part3 of event pushed please check');
     }).catchError((error) {
       print(error);
     });
