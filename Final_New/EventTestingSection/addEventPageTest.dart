@@ -1,47 +1,29 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:multiselect_formfield/multiselect_formfield.dart';
-import 'package:date_range_form_field/date_range_form_field.dart';
 
-class AddEventPage extends StatefulWidget {
+class AddEventPageTest extends StatefulWidget {
   final LatLng locationIn;
-  const AddEventPage(this.locationIn);
+  const AddEventPageTest(this.locationIn);
 
   @override
   _AddEventPageState createState() => _AddEventPageState();
 }
 
-class _AddEventPageState extends State<AddEventPage> {
+class _AddEventPageState extends State<AddEventPageTest> {
   final DatabaseReference firebaseDB = FirebaseDatabase.instance.reference();
   final TextEditingController eventNameController = TextEditingController();
   final TextEditingController eventAddressController = TextEditingController();
   final TextEditingController eventDescriptionController =
       TextEditingController();
 
-  DateTimeRange myDateRange;
   List eventNatureList;
   List eventFormList;
   Map<String, bool> eventNatureListpart = Map();
   Map<String, bool> eventFormListpart = Map();
-  Map<String, String> startDate = Map();
-  Map<String, String> endDate = Map();
-
   final formKeyNature = new GlobalKey<FormState>();
   final formKeyForm = new GlobalKey<FormState>();
-  final formKeyDate = new GlobalKey<FormState>();
-
-  void _saveToDate() {
-    final FormState form = formKeyDate.currentState;
-    form.save();
-    startDate['startDate'] =
-        Jiffy(myDateRange.start, 'yyyy-MM-dd').format('dd/MM/yyyy');
-    endDate['endDate'] =
-        Jiffy(myDateRange.end, 'yyyy-MM-dd').format('dd/MM/yyyy');
-    print('startDate: $startDate');
-    print('endDate: $endDate');
-  }
 
   //check if not selected,, will save or not?
   void _saveForm() {
@@ -59,11 +41,6 @@ class _AddEventPageState extends State<AddEventPage> {
     //debugPrint('_saveToNature');
     //print(eventNatureListpart);
     eventNatureListpart.clear();
-    if (eventNatureList.contains('photo spot')) {
-      eventNatureListpart['photo spot'] = true;
-    } else {
-      eventNatureListpart['photo spot'] = false;
-    }
     if (eventNatureList.contains('nightlife')) {
       eventNatureListpart['nighlife'] = true;
     } else {
@@ -93,11 +70,6 @@ class _AddEventPageState extends State<AddEventPage> {
       eventNatureListpart['festival'] = true;
     } else {
       eventNatureListpart['festival'] = false;
-    }
-    if (eventNatureList.contains('food&drink')) {
-      eventNatureListpart['food&drink'] = true;
-    } else {
-      eventNatureListpart['food&drink'] = false;
     }
     if (eventNatureList.contains('film&TV')) {
       eventNatureListpart['film&TV'] = true;
@@ -186,6 +158,7 @@ class _AddEventPageState extends State<AddEventPage> {
       'eventHost': 'Ku',
       'eventDescription': eventDescriptionController.text.trim(),
     };
+    //TODO: pass location in
     Map<String, double> part2 = {
       'lattitude': widget.locationIn.latitude,
       'longitude': widget.locationIn.longitude,
@@ -195,32 +168,22 @@ class _AddEventPageState extends State<AddEventPage> {
       'eventForm': eventFormListpart,
     };
     DatabaseReference pushEventDB = firebaseDB.child('event').push();
-    //debugPrint('checking before pushing');
-    //print(part1);
-    //print(part2);
-    //print(part3);
+    debugPrint('checking before pushing');
+    print(part1);
+    print(part2);
+    print(part3);
     pushEventDB.set(part1).whenComplete(() {
-      //print('part1 of event please check');
+      print('part1 of event please check');
     }).catchError((error) {
       print(error);
     });
     pushEventDB.update(part2).whenComplete(() {
-      //print('part2 of event pushed please check');
+      print('part2 of event pushed please check');
     }).catchError((error) {
       print(error);
     });
     pushEventDB.update(part3).whenComplete(() {
-      //print('part3 of event pushed please check');
-    }).catchError((error) {
-      print(error);
-    });
-    pushEventDB.update(startDate).whenComplete(() {
-      //print('part3 of event pushed please check');
-    }).catchError((error) {
-      print(error);
-    });
-    pushEventDB.update(endDate).whenComplete(() {
-      //print('part3 of event pushed please check');
+      print('part3 of event pushed please check');
     }).catchError((error) {
       print(error);
     });
@@ -337,8 +300,8 @@ class _AddEventPageState extends State<AddEventPage> {
                   setState(() {
                     eventNatureList = value;
                   });
-                  //print('eventNatureList is');
-                  //print(eventNatureList);
+                  print('eventNatureList is');
+                  print(eventNatureList);
                 }),
           ),
           Form(
@@ -408,32 +371,8 @@ class _AddEventPageState extends State<AddEventPage> {
                   setState(() {
                     eventFormList = value;
                   });
-                  //print('eventFormList is');
-                  //print(eventFormList);
-                }),
-          ),
-          Form(
-            key: formKeyDate,
-            child: DateRangeField(
-                context: context,
-                decoration: InputDecoration(
-                  labelText: 'Date Range',
-                  prefixIcon: Icon(Icons.date_range),
-                  hintText: 'Please select a start and end date',
-                  border: OutlineInputBorder(),
-                ),
-                initialValue:
-                    DateTimeRange(start: DateTime.now(), end: DateTime.now()),
-                validator: (value) {
-                  if (value.start.isBefore(DateTime.now())) {
-                    return 'Please enter a valid date';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  setState(() {
-                    myDateRange = value;
-                  });
+                  print('eventFormList is');
+                  print(eventFormList);
                 }),
           ),
           Container(
@@ -458,12 +397,6 @@ class _AddEventPageState extends State<AddEventPage> {
               Navigator.pop(context);
             },
             child: Text('Create Event'),
-          ),
-          RaisedButton(
-            onPressed: () {
-              _saveToDate();
-            },
-            child: Text('Print date'),
           ),
         ]),
       ),

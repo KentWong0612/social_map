@@ -17,8 +17,8 @@ class EventTableFromDB extends ChangeNotifier {
   Future<void> _getEventData() async {
     testinglist.clear();
     debugPrint('right after clear and the length is ${testinglist.length}');
-    var snapshot2 = await firebaseDB.child('event').once();
-    Map map2 = snapshot2.value;
+    var eventID = await firebaseDB.child('event').once();
+    Map map2 = eventID.value;
 
     for (var element in map2.keys.toList()) {
       final innersnapshot =

@@ -8,21 +8,16 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 //TODO: list bool -> list int such that 2 = major 1= minor 0 = not
 class MapEvent {
   LatLng eventLocation;
-  //Latlng info
   String eventName;
-  //User input in apps
-  int eventID;
-  //TODO: implement a function computed event id from database
+  //int eventID;
   String eventHost;
-  //Problem: current auth service store no user name, need a table to store user name
-  List<bool> eventNature;
-  List<bool> eventForm;
-  //User selected in apps, multi-select available, Idea [0] = NightLife, [1] = food
-  //TODO: need to design the category
+  String eventAddress;
+  dynamic eventNature;
+  dynamic eventForm;
   String eventDescription;
-  //User input in apps
-  List<bool> targetAgeRange;
-  //User selected in apps, multi-select available, Idea: [0]=all, [1]=0-10 ...
+  //List<bool> targetAgeRange;
+  String startDate;
+  String endDate;
 
   /*
     Other possible parameter:
@@ -35,31 +30,26 @@ class MapEvent {
   //constructor
   //TODO: add assert function
   MapEvent(
-      LatLng _eventLocation,
-      String _eventName,
-      List<bool> _eventNature,
-      List<bool> _eventForm,
-      String _eventDescription,
-      List<bool> _targetAgeRange) {
-    eventLocation = _eventLocation;
-    eventName = _eventName;
-    eventNature = _eventNature;
-    eventForm = _eventForm;
-    eventDescription = _eventDescription;
-    targetAgeRange = _targetAgeRange;
+      this.eventLocation,
+      this.eventName,
+      this.eventHost,
+      this.eventAddress,
+      this.eventDescription,
+      this.startDate,
+      this.endDate,
+      this.eventNature,
+      this.eventForm) {
+    //print('Map event created $eventName and eventNature are ${eventNature}');
   }
-
-  MapEvent.fromFirebase(Map<dynamic, dynamic> json) {
-    eventDescription = json['eventDescription'];
-    eventHost = json['eventHost'];
-    eventName = json['eventName'];
-    eventLocation = LatLng(
-        double.parse(json['lattitude']), double.parse(json['longitude']));
-    //category and age missing
-  }
-
-  //setter and getter
-
+  MapEvent.forProvider(
+    this.eventLocation,
+    this.eventName,
+    this.eventHost,
+    this.eventAddress,
+    this.eventDescription,
+    this.startDate,
+    this.endDate,
+  ) {}
 }
 /*
   //testing event

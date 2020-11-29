@@ -46,6 +46,7 @@ dependencies:
   multiselect_formfield: ^0.1.5
   floating_action_bubble: ^1.1.2
   date_range_form_field: ^0.0.4
+  jiffy: ^3.0.1
   
 dev_dependencies:
   flutter_test:

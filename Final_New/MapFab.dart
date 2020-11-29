@@ -68,7 +68,7 @@ class _MapTestScreenState extends State<MapTestScreen>
         flush = Flushbar<bool>(
           flushbarPosition: FlushbarPosition.TOP,
           title: markerID,
-          message: "Supposed to be event description but not yet implemented",
+          message: eventTableDB.eventMap[markerID].eventDescription,
           icon: Icon(
             Icons.info_outline,
             color: Colors.blue,
@@ -271,8 +271,7 @@ class _MapTestScreenState extends State<MapTestScreen>
   void _addEventToMarkerAndList() async {
     print('data printing check ${eventTableDB.testinglist.length}');
     for (var element in eventTableDB.testinglist) {
-      print(
-          'event name = ${element['eventName']} , event position = ${element['lattitude']}, ${element['longitude']}');
+      //print( 'event name = ${element['eventName']} , event position = ${element['lattitude']}, ${element['longitude']}');
       temp = MapEvent(
           LatLng(double.tryParse(element['lattitude'].toString()),
               double.tryParse(element['longitude'].toString())),
