@@ -1,0 +1,16 @@
+DBrealTimeTest:
+    1. CRUD tutorial
+    2. Event Table download
+
+ProviderTest:
+    1. add Event page connected
+    
+
+TODO:
+Change Marker color
+Implment event detail page
+Add home marker
+remove marker if event removed
+
+1. stream listen to the change of ProviderTest <- How
+2. then changed then do sth
