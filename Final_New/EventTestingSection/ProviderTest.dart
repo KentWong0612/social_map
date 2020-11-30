@@ -6,13 +6,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'addEventPageTest.dart';
 
-class EventTableFromDB extends ChangeNotifier {
+class EventTableFromDBTest extends ChangeNotifier {
   DatabaseReference firebaseDB;
   StreamSubscription<Event> fireBaseDBSubScriptionInProvider;
 
   List<Map> testinglist = [];
   //List<Map> get obtainlist => testinglist;
-  EventTableFromDB(DatabaseReference this.firebaseDB) {
+  EventTableFromDBTest(DatabaseReference this.firebaseDB) {
     fireBaseDBSubScriptionInProvider =
         firebaseDB.child('event').onValue.listen((Event event) {
       if (event.snapshot.value != null) {
@@ -45,7 +45,7 @@ Future<void> main() async {
   final DatabaseReference fireBaseDB = FirebaseDatabase.instance.reference();
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider.value(value: EventTableFromDB(fireBaseDB))
+      ChangeNotifierProvider.value(value: EventTableFromDBTest(fireBaseDB))
     ],
     child: MaterialApp(
         home: Scaffold(
@@ -64,7 +64,7 @@ class _ReadDataBasePageState extends State<ReadDataBasePage> {
   StreamSubscription<Event> fireBaseDBSubScription;
   String eventname = '';
   String eventhost = '';
-  EventTableFromDB eventTable;
+  EventTableFromDBTest eventTable;
 
   @override
   void initState() {
@@ -126,7 +126,7 @@ class _ReadDataBasePageState extends State<ReadDataBasePage> {
 
   @override
   Widget build(BuildContext context) {
-    eventTable = Provider.of<EventTableFromDB>(context);
+    eventTable = Provider.of<EventTableFromDBTest>(context);
     return Scaffold(
         appBar: AppBar(
           title: Text('Testing Event function related DB'),

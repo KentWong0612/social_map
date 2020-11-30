@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'EventDetailPage.dart';
 import 'Firebase/MapEventProvider.dart';
 import 'addEventPage.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +20,7 @@ class MapTestScreen extends StatefulWidget {
 }
 
 class _MapTestScreenState extends State<MapTestScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   GoogleMapController mapController;
   String _mapStyle;
   var firebaseUser;
@@ -59,10 +60,13 @@ class _MapTestScreenState extends State<MapTestScreen>
   }
 
   Marker createMarkerForEvent(String markerID, LatLng location) {
+    print('icon test: ${eventTableDB.eventMap[markerID].eventNatureTrue[0]}');
     return Marker(
       markerId: MarkerId(markerID),
       draggable: false,
       position: location,
+      icon: icon_list[eventTableDB.eventMap[markerID].eventNatureTrue[0]],
+      //icon: icon_list['photo spot'],
       onTap: () {
         debugPrint('debug: ' + markerID + ' tapped');
         flush = Flushbar<bool>(
@@ -74,9 +78,12 @@ class _MapTestScreenState extends State<MapTestScreen>
             color: Colors.blue,
           ),
           mainButton: FlatButton(
-            onPressed: () {
-              flush.dismiss(true); // result = true
+            onPressed: () async {
+              await flush.dismiss(true); // result = true
               //TODO: jump to other page
+              final navigator = Navigator.of(context);
+              await navigator.push(MaterialPageRoute(
+                  builder: (context) => DetailScreenPage(markerID)));
             },
             child: Text(
               "More detail",
@@ -87,6 +94,108 @@ class _MapTestScreenState extends State<MapTestScreen>
           ..show(context);
       },
     );
+  }
+
+  BitmapDescriptor currentLocation_Icon,
+      photo_spot_Icon,
+      nightlife_Icon,
+      sports_Icon,
+      jetso_Icon,
+      music_Icon,
+      art_Icon,
+      festival_Icon,
+      food_Icon,
+      film_Icon,
+      kid_Icon,
+      lohas_Icon,
+      style_Icon,
+      testing_Icon;
+
+  Map<String, BitmapDescriptor> icon_list = Map();
+  void _initialIcon() {
+    BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.1),
+            'assets/currentLocation.png')
+        .then((d) {
+      currentLocation_Icon = d;
+    });
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 1.5), 'assets/photo_spot.png')
+        .then((d) {
+      photo_spot_Icon = d;
+      icon_list['photo spot'] = photo_spot_Icon;
+    });
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 1.5), 'assets/nighlife.png')
+        .then((d) {
+      nightlife_Icon = d;
+      icon_list['nightlife'] = nightlife_Icon;
+    });
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 1.5), 'assets/sports.png')
+        .then((d) {
+      sports_Icon = d;
+      icon_list['sports'] = sports_Icon;
+    });
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 1.5), 'assets/sports.png')
+        .then((d) {
+      jetso_Icon = d;
+      icon_list['jetso'] = jetso_Icon;
+    });
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 1.5), 'assets/music.png')
+        .then((d) {
+      music_Icon = d;
+      icon_list['music'] = music_Icon;
+    });
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 1.5), 'assets/art.png')
+        .then((d) {
+      art_Icon = d;
+      icon_list['art'] = art_Icon;
+    });
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 1.5), 'assets/festival.png')
+        .then((d) {
+      festival_Icon = d;
+      icon_list['festival'] = festival_Icon;
+    });
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 1.5), 'assets/food.png')
+        .then((d) {
+      food_Icon = d;
+      icon_list['food&drink'] = food_Icon;
+    });
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 1.5), 'assets/film.png')
+        .then((d) {
+      film_Icon = d;
+      icon_list['film&TV'] = film_Icon;
+    });
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 1.5), 'assets/lohas.png')
+        .then((d) {
+      kid_Icon = d;
+      icon_list['kid'] = kid_Icon;
+    });
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 1.5), 'assets/lohas.png')
+        .then((d) {
+      lohas_Icon = d;
+      icon_list['lohas'] = lohas_Icon;
+    });
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 1.5), 'assets/style.png')
+        .then((d) {
+      style_Icon = d;
+      icon_list['style'] = style_Icon;
+    });
+    BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 1.5),
+            'assets/TestingMapPin.png')
+        .then((d) {
+      testing_Icon = d;
+      icon_list['testing'] = testing_Icon;
+    });
   }
 
   @override
@@ -107,7 +216,7 @@ class _MapTestScreenState extends State<MapTestScreen>
     if (userLocation != null) {
       _allMarkers.add(userLocation);
     }
-
+    _initialIcon();
     _getCurrentLocation();
     _getScreenLocation();
     _loadDataFromSharedPreference();
@@ -124,6 +233,8 @@ class _MapTestScreenState extends State<MapTestScreen>
     });
   }
 
+  @override
+  bool get wantKeepAlive => true;
   //sharedpref for saving home position
   SharedPreferences prefs;
   Marker home;
@@ -217,6 +328,7 @@ class _MapTestScreenState extends State<MapTestScreen>
         draggable: false,
         zIndex: 2.0,
         flat: true,
+        icon: currentLocation_Icon,
       );
     });
     _allMarkers.add(userLocation);
@@ -283,13 +395,13 @@ class _MapTestScreenState extends State<MapTestScreen>
           element['EndDate'],
           element['eventNature'],
           element['eventForm']);
+      await eventSavedFromDB.add(temp);
       setState(() {
         event = createMarkerForEvent(
             element['eventName'],
             LatLng(double.tryParse(element['lattitude'].toString()),
                 double.tryParse(element['longitude'].toString())));
       });
-      await eventSavedFromDB.add(temp);
       await _allMarkers.add(event);
     }
   }
@@ -337,71 +449,61 @@ class _MapTestScreenState extends State<MapTestScreen>
                   FloatingActionButtonLocation.endDocked,
 
               //Init Floating Action Bubble
-              floatingActionButton: FloatingActionBubble(
-                // Menu items
-                items: <Bubble>[
-                  // Floating action menu item
-                  Bubble(
-                    title: "Move to your location",
-                    iconColor: Colors.white,
-                    bubbleColor: Colors.blue,
-                    icon: Icons.my_location,
-                    titleStyle: TextStyle(fontSize: 16, color: Colors.white),
-                    onPress: () {
-                      _moveToCurrentLocation();
-                      _animationController.reverse();
-                    },
-                  ),
-                  //Floating action menu item
-                  Bubble(
-                    title: "Refresh",
-                    iconColor: Colors.white,
-                    bubbleColor: Colors.blue,
-                    icon: Icons.refresh,
-                    titleStyle: TextStyle(fontSize: 16, color: Colors.white),
-                    onPress: () {
-                      _restartMarker();
-                      _animationController.reverse();
-                    },
-                  ),
-                  Bubble(
-                    title: "Place Map Pin",
-                    iconColor: Colors.white,
-                    bubbleColor: Colors.blue,
-                    icon: Icons.pin_drop,
-                    titleStyle: TextStyle(fontSize: 16, color: Colors.white),
-                    onPress: () {
-                      _placeScreenMarker();
-                      _animationController.reverse();
-                    },
-                  ),
-                  Bubble(
-                    title: "Save Map Pin as Home",
-                    iconColor: Colors.white,
-                    bubbleColor: Colors.blue,
-                    icon: Icons.save,
-                    titleStyle: TextStyle(fontSize: 16, color: Colors.white),
-                    onPress: () {
-                      _saveDataToSharedPreference();
-                      _animationController.reverse();
-                    },
-                  ),
-                ],
+              floatingActionButton: Expanded(
+                child: FloatingActionBubble(
+                  // Menu items
+                  items: <Bubble>[
+                    //Floating action menu item
+                    Bubble(
+                      title: "Refresh",
+                      iconColor: Colors.white,
+                      bubbleColor: Colors.blue,
+                      icon: Icons.refresh,
+                      titleStyle: TextStyle(fontSize: 16, color: Colors.white),
+                      onPress: () {
+                        _restartMarker();
+                        _animationController.reverse();
+                      },
+                    ),
+                    Bubble(
+                      title: "Place Map Pin",
+                      iconColor: Colors.white,
+                      bubbleColor: Colors.blue,
+                      icon: Icons.pin_drop,
+                      titleStyle: TextStyle(fontSize: 16, color: Colors.white),
+                      onPress: () {
+                        _placeScreenMarker();
+                        _animationController.reverse();
+                      },
+                    ),
+                    Bubble(
+                      title: "Save Map Pin as Home",
+                      iconColor: Colors.white,
+                      bubbleColor: Colors.blue,
+                      icon: Icons.save,
+                      titleStyle: TextStyle(fontSize: 16, color: Colors.white),
+                      onPress: () {
+                        _saveDataToSharedPreference();
+                        _animationController.reverse();
+                      },
+                    ),
+                  ],
 
-                // animation controller
-                animation: _animation,
+                  // animation controller
+                  animation: _animation,
 
-                // On pressed change animation state
-                onPress: () => _animationController.isCompleted
-                    ? _animationController.reverse()
-                    : _animationController.forward(),
+                  // On pressed change animation state
+                  onPress: () => _animationController.isCompleted
+                      ? _animationController.reverse()
+                      : _animationController.forward(),
 
-                // Floating Action button Icon color
-                iconColor: Colors.blue,
+                  // Floating Action button Icon color
+                  iconColor: Colors.blue,
 
-                // Flaoting Action button Icon
-                iconData: Icons.ac_unit,
-                backGroundColor: Colors.white,
+                  // Flaoting Action button Icon
+                  iconData: Icons.ac_unit,
+                  backGroundColor: Colors.white,
+                ),
               )),
           Align(
             alignment: Alignment.bottomCenter,
@@ -446,18 +548,6 @@ class _MapTestScreenState extends State<MapTestScreen>
               floatingActionButton: FloatingActionBubble(
                 // Menu items
                 items: <Bubble>[
-                  // Floating action menu item
-                  Bubble(
-                    title: "Move to your location",
-                    iconColor: Colors.white,
-                    bubbleColor: Colors.blue,
-                    icon: Icons.my_location,
-                    titleStyle: TextStyle(fontSize: 16, color: Colors.white),
-                    onPress: () {
-                      _moveToCurrentLocation();
-                      _animationController.reverse();
-                    },
-                  ),
                   //Floating action menu item
                   Bubble(
                     title: "Refresh",

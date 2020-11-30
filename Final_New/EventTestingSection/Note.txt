@@ -7,11 +7,18 @@ ProviderTest:
     
 
 TODO:
-Change Marker color
-Implment event detail page
-Add home marker
-remove marker if event removed
+
+Implment event detail page => nature and form icon, add photo button?
+food.icon remake
+photo gallery
+default location why tin shui wai s  tation?
+add Firebase Rule
+
+Other:
 duration of flush bar(not preferred)? see its youtube and see if there is solution not to create a new one(preferred)
+format the detail to be shown on flush bar
+camera page
+eventdetailpage text style
 
 1. stream listen to the change of ProviderTest <- How
 2. then changed then do sth

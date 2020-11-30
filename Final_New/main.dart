@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'EventDetailPage.dart';
 import 'Firebase/AuthenticationService.dart';
 import 'Firebase/MapEventProvider.dart';
 import 'MapFab.dart';
@@ -76,12 +77,12 @@ class AuthenticationWrapper extends StatelessWidget {
                 text: 'Map',
               ),
               Tab(
-                icon: Icon(Icons.camera),
-                text: 'Camera',
-              ),
-              Tab(
                 icon: Icon(Icons.settings),
                 text: 'Setting',
+              ),
+              Tab(
+                icon: Icon(Icons.camera),
+                text: 'Camera',
               ),
             ],
           ),
@@ -98,8 +99,8 @@ class AuthenticationWrapper extends StatelessWidget {
           physics: NeverScrollableScrollPhysics(),
           children: [
             MapTestScreen(),
-            CameraScreen(),
             SettingPage(),
+            CameraScreen(),
           ],
         ),
       ),
@@ -108,16 +109,10 @@ class AuthenticationWrapper extends StatelessWidget {
 }
 
 class DataSearch extends SearchDelegate<String> {
-  final category = [
-    'sales',
-    'society activity',
-    'emergency accident',
-    'Sports',
-    'Special Incident',
-    'In a Hurry',
-    'public events',
-  ];
-  final recentSearch = ['hello', 'bye'];
+  //TODOL recent search not working
+  final recentSearch = [];
+  EventTableFromDB eventTableDB;
+
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -158,17 +153,23 @@ class DataSearch extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    eventTableDB = context.watch<EventTableFromDB>();
     final suggestionList = query.isEmpty
         ? recentSearch
-        : category.where((p) => p.startsWith(query)).toList();
+        : eventTableDB.eventMap.keys
+            .where((p) => p.toLowerCase().startsWith(query.toLowerCase()))
+            .toList();
 
     return ListView.builder(
       itemBuilder: (context, index) => ListTile(
-        onTap: () {
-          showResults(context);
+        onTap: () async {
+          recentSearch.add(suggestionList[index]);
+          close(context, null);
+          final navigator = Navigator.of(context);
+          await navigator.push(MaterialPageRoute(
+              builder: (context) => DetailScreenPage(suggestionList[index])));
         },
         leading: Icon(Icons.arrow_right),
-        //title: Text(suggestionList[index]),
         title: RichText(
             text: TextSpan(
                 text: suggestionList[index].substring(0, query.length),

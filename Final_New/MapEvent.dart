@@ -18,7 +18,8 @@ class MapEvent {
   //List<bool> targetAgeRange;
   String startDate;
   String endDate;
-
+  List<String> eventNatureTrue = [];
+  List<String> eventFormTrue = [];
   /*
     Other possible parameter:
       int _eventPrice;                // if 0 =free,, if negative = vary
@@ -26,6 +27,77 @@ class MapEvent {
       photo?
       Time Varaible?DartTime
   */
+  void _saveToTrueForm() {
+    if (eventForm['show'] == true) {
+      eventFormTrue.add('show');
+    }
+    if (eventForm['carnival'] == true) {
+      eventFormTrue.add('carnival');
+    }
+    if (eventForm['exhibition'] == true) {
+      eventFormTrue.add('exhibition');
+    }
+    if (eventForm['sale'] == true) {
+      eventFormTrue.add('sale');
+    }
+    if (eventForm['trip'] == true) {
+      eventFormTrue.add('trip');
+    }
+    if (eventForm['race'] == true) {
+      eventFormTrue.add('race');
+    }
+    if (eventForm['party'] == true) {
+      eventFormTrue.add('party');
+    }
+    if (eventForm['experience'] == true) {
+      eventFormTrue.add('experience');
+    }
+    if (eventForm['workshop'] == true) {
+      eventFormTrue.add('workshop');
+    }
+    if (eventForm['class'] == true) {
+      eventFormTrue.add('class');
+    }
+  }
+
+  void _saveToTrueNature() {
+    if (eventNature['photo spot'] == true) {
+      eventNatureTrue.add('photo spot');
+    }
+    if (eventNature['nightlife'] == true) {
+      eventNatureTrue.add('nighlife');
+    }
+    if (eventNature['sports'] == true) {
+      eventNatureTrue.add('sports');
+    }
+    if (eventNature['jetso'] == true) {
+      eventNatureTrue.add('jetso');
+    }
+    if (eventNature['music'] == true) {
+      eventNatureTrue.add('music');
+    }
+    if (eventNature['art'] == true) {
+      eventNatureTrue.add('art');
+    }
+    if (eventNature['festival'] == true) {
+      eventNatureTrue.add('festival');
+    }
+    if (eventNature['food&drink'] == true) {
+      eventNatureTrue.add('food&drink');
+    }
+    if (eventNature['film&TV'] == true) {
+      eventNatureTrue.add('film&TV');
+    }
+    if (eventNature['kid'] == true) {
+      eventNatureTrue.add('kid');
+    }
+    if (eventNature['lohas'] == true) {
+      eventNatureTrue.add('lohas');
+    }
+    if (eventNature['style'] == true) {
+      eventNatureTrue.add('style');
+    }
+  }
 
   //constructor
   //TODO: add assert function
@@ -39,39 +111,13 @@ class MapEvent {
       this.endDate,
       this.eventNature,
       this.eventForm) {
-    //print('Map event created $eventName and eventNature are ${eventNature}');
+    if (eventNature != null) {
+      _saveToTrueNature();
+    }
+    if (eventForm != null) {
+      _saveToTrueForm();
+    }
+    print(
+        'MapEvent Class Test: $eventName is $eventNatureTrue and $eventFormTrue');
   }
-  MapEvent.forProvider(
-    this.eventLocation,
-    this.eventName,
-    this.eventHost,
-    this.eventAddress,
-    this.eventDescription,
-    this.startDate,
-    this.endDate,
-  ) {}
 }
-/*
-  //testing event
-  //suppose database return a list of event
-  _allMarkers.add(createMarkerFromEvent(basketballMatch));
-  MapEvent basketballMatch = MapEvent(
-      LatLng(22.465942018277172, 114.00185947335554),
-      'basketballMatch',
-      [false, true, false],
-      [false, true, false],
-      'this is a basketball match',
-      [false, true, false]);
-
-  //create marker out of event
-  Marker createMarkerFromEvent(MapEvent event) {
-    return Marker(
-      markerId: MarkerId(event.eventName),
-      draggable: false,
-      position: event.eventLocation,
-      onTap: () {
-        debugPrint('debug: ' + event.eventName + ' tapped');
-      },
-    );
-  }
-*/
