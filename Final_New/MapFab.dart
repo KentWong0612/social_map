@@ -97,6 +97,7 @@ class _MapTestScreenState extends State<MapTestScreen>
   }
 
   BitmapDescriptor currentLocation_Icon,
+      home_Icon,
       photo_spot_Icon,
       nightlife_Icon,
       sports_Icon,
@@ -117,6 +118,11 @@ class _MapTestScreenState extends State<MapTestScreen>
             'assets/currentLocation.png')
         .then((d) {
       currentLocation_Icon = d;
+    });
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 2.1), 'assets/home.png')
+        .then((d) {
+      home_Icon = d;
     });
     BitmapDescriptor.fromAssetImage(
             ImageConfiguration(devicePixelRatio: 1.5), 'assets/photo_spot.png')
@@ -247,7 +253,16 @@ class _MapTestScreenState extends State<MapTestScreen>
     setState(() {
       var tempLat = (prefs.getDouble(prefLat) ?? 22.447901);
       var tempLong = (prefs.getDouble(prefLong) ?? 114.025432);
-      home = createMarkerFromLatLng('home', LatLng(tempLat, tempLong));
+      //home = createMarkerFromLatLng('home', LatLng(tempLat, tempLong));
+      home = Marker(
+        markerId: MarkerId('home'),
+        draggable: false,
+        position: LatLng(tempLat, tempLong),
+        icon: home_Icon,
+        onTap: () {
+          debugPrint('debug: home tapped');
+        },
+      );
     });
     debugPrint('debug: saved home location ' + home.position.toString());
     _allMarkers.add(home);
@@ -259,6 +274,7 @@ class _MapTestScreenState extends State<MapTestScreen>
     final screen_location = await _getScreenLocation();
     await prefs.setDouble(prefLat, screen_location.latitude);
     await prefs.setDouble(prefLong, screen_location.longitude);
+    await _loadDataFromSharedPreference();
     debugPrint(
         'debug: saved new location to device' + screen_location.toString());
   }
@@ -436,75 +452,75 @@ class _MapTestScreenState extends State<MapTestScreen>
       return Consumer<EventTableFromDB>(
         builder: (context, eventTableDB, child) => Stack(children: [
           Scaffold(
-              body: GoogleMap(
-                onMapCreated: _onMapCreated,
-                compassEnabled: true,
-                mapToolbarEnabled: false,
-                zoomGesturesEnabled: true,
-                rotateGesturesEnabled: true,
-                initialCameraPosition: initialLocation,
-                markers: Set.from(_allMarkers),
-              ),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.endDocked,
+            body: GoogleMap(
+              onMapCreated: _onMapCreated,
+              compassEnabled: true,
+              mapToolbarEnabled: false,
+              zoomControlsEnabled: false,
+              zoomGesturesEnabled: true,
+              rotateGesturesEnabled: true,
+              initialCameraPosition: initialLocation,
+              markers: Set.from(_allMarkers),
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.endDocked,
 
-              //Init Floating Action Bubble
-              floatingActionButton: Expanded(
-                child: FloatingActionBubble(
-                  // Menu items
-                  items: <Bubble>[
-                    //Floating action menu item
-                    Bubble(
-                      title: "Refresh",
-                      iconColor: Colors.white,
-                      bubbleColor: Colors.blue,
-                      icon: Icons.refresh,
-                      titleStyle: TextStyle(fontSize: 16, color: Colors.white),
-                      onPress: () {
-                        _restartMarker();
-                        _animationController.reverse();
-                      },
-                    ),
-                    Bubble(
-                      title: "Place Map Pin",
-                      iconColor: Colors.white,
-                      bubbleColor: Colors.blue,
-                      icon: Icons.pin_drop,
-                      titleStyle: TextStyle(fontSize: 16, color: Colors.white),
-                      onPress: () {
-                        _placeScreenMarker();
-                        _animationController.reverse();
-                      },
-                    ),
-                    Bubble(
-                      title: "Save Map Pin as Home",
-                      iconColor: Colors.white,
-                      bubbleColor: Colors.blue,
-                      icon: Icons.save,
-                      titleStyle: TextStyle(fontSize: 16, color: Colors.white),
-                      onPress: () {
-                        _saveDataToSharedPreference();
-                        _animationController.reverse();
-                      },
-                    ),
-                  ],
-
-                  // animation controller
-                  animation: _animation,
-
-                  // On pressed change animation state
-                  onPress: () => _animationController.isCompleted
-                      ? _animationController.reverse()
-                      : _animationController.forward(),
-
-                  // Floating Action button Icon color
-                  iconColor: Colors.blue,
-
-                  // Flaoting Action button Icon
-                  iconData: Icons.ac_unit,
-                  backGroundColor: Colors.white,
+            //Init Floating Action Bubble
+            floatingActionButton: FloatingActionBubble(
+              // Menu items
+              items: <Bubble>[
+                //Floating action menu item
+                Bubble(
+                  title: "Refresh",
+                  iconColor: Colors.white,
+                  bubbleColor: Colors.blue,
+                  icon: Icons.refresh,
+                  titleStyle: TextStyle(fontSize: 16, color: Colors.white),
+                  onPress: () {
+                    _restartMarker();
+                    _animationController.reverse();
+                  },
                 ),
-              )),
+                Bubble(
+                  title: "Place Map Pin",
+                  iconColor: Colors.white,
+                  bubbleColor: Colors.blue,
+                  icon: Icons.pin_drop,
+                  titleStyle: TextStyle(fontSize: 16, color: Colors.white),
+                  onPress: () {
+                    _placeScreenMarker();
+                    _animationController.reverse();
+                  },
+                ),
+                Bubble(
+                  title: "Save Map Pin as Home",
+                  iconColor: Colors.white,
+                  bubbleColor: Colors.blue,
+                  icon: Icons.save,
+                  titleStyle: TextStyle(fontSize: 16, color: Colors.white),
+                  onPress: () {
+                    _saveDataToSharedPreference();
+                    _animationController.reverse();
+                  },
+                ),
+              ],
+
+              // animation controller
+              animation: _animation,
+
+              // On pressed change animation state
+              onPress: () => _animationController.isCompleted
+                  ? _animationController.reverse()
+                  : _animationController.forward(),
+
+              // Floating Action button Icon color
+              iconColor: Colors.blue,
+
+              // Flaoting Action button Icon
+              iconData: Icons.ac_unit,
+              backGroundColor: Colors.white,
+            ),
+          ),
           Align(
             alignment: Alignment.bottomCenter,
             child: FloatingActionButton(

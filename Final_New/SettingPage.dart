@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -94,9 +95,7 @@ class SettingPageState extends State<SettingPage> {
               title: 'test',
               leading: Icon(Icons.account_box),
               onTap: () {
-                final snackBar =
-                    new SnackBar(content: new Text('Please log in again'));
-                Scaffold.of(context).showSnackBar(snackBar);
+                print('tell me $firebaseUser');
               },
             ),
           ],

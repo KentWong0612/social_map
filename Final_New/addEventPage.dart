@@ -1,9 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:multiselect_formfield/multiselect_formfield.dart';
 import 'package:date_range_form_field/date_range_form_field.dart';
+import 'package:provider/provider.dart';
 
 class AddEventPage extends StatefulWidget {
   final LatLng locationIn;
@@ -19,6 +22,10 @@ class _AddEventPageState extends State<AddEventPage> {
   final TextEditingController eventAddressController = TextEditingController();
   final TextEditingController eventDescriptionController =
       TextEditingController();
+
+  bool _nameValidate = false;
+  bool _addressValidate = false;
+  bool _descriptionValidate = false;
 
   DateTimeRange myDateRange;
   List eventNatureList;
@@ -194,6 +201,9 @@ class _AddEventPageState extends State<AddEventPage> {
       'eventNature': eventNatureListpart,
       'eventForm': eventFormListpart,
     };
+    Map<String, String> userID = {
+      'uid': firebaseUser.uid,
+    };
     DatabaseReference pushEventDB = firebaseDB.child('event').push();
     //debugPrint('checking before pushing');
     //print(part1);
@@ -214,16 +224,28 @@ class _AddEventPageState extends State<AddEventPage> {
     }).catchError((error) {
       print(error);
     });
-    pushEventDB.update(startDate).whenComplete(() {
-      //print('part3 of event pushed please check');
+    pushEventDB.update(userID).whenComplete(() {
+      //print('userID of event pushed please check');
     }).catchError((error) {
       print(error);
     });
-    pushEventDB.update(endDate).whenComplete(() {
-      //print('part3 of event pushed please check');
-    }).catchError((error) {
+    pushEventDB.update(startDate).whenComplete(() {}).catchError((error) {
       print(error);
     });
+    pushEventDB.update(endDate).whenComplete(() {}).catchError((error) {
+      print(error);
+    });
+    print('event pushed by ${firebaseUser.uid}');
+    Flushbar flush = Flushbar<bool>(
+      flushbarPosition: FlushbarPosition.TOP,
+      duration: Duration(seconds: 3),
+      title: 'Event created!',
+      message: 'Please refresh to see the new event',
+      icon: Icon(
+        Icons.done,
+        color: Colors.blue,
+      ),
+    )..show(context);
   }
 
   @override
@@ -242,8 +264,11 @@ class _AddEventPageState extends State<AddEventPage> {
     eventDescriptionController.dispose();
   }
 
+  User firebaseUser;
   @override
+  Flushbar flush;
   Widget build(BuildContext context) {
+    firebaseUser = context.watch<User>();
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Event'),
@@ -254,12 +279,18 @@ class _AddEventPageState extends State<AddEventPage> {
             controller: eventNameController,
             decoration: InputDecoration(
               labelText: 'event name',
+              filled: _nameValidate,
+              fillColor: Colors.red[100],
+              errorText: _nameValidate ? 'Value Can\'t Be Empty' : null,
             ),
           ),
           TextField(
             controller: eventAddressController,
             decoration: InputDecoration(
+              filled: _addressValidate,
+              fillColor: Colors.red[100],
               labelText: 'event address ',
+              errorText: _addressValidate ? 'Value Can\'t Be Empty' : null,
             ),
           ),
           Form(
@@ -443,6 +474,10 @@ class _AddEventPageState extends State<AddEventPage> {
                 controller: eventDescriptionController,
                 decoration: InputDecoration(
                   labelText: 'event Description',
+                  filled: _descriptionValidate,
+                  fillColor: Colors.red[100],
+                  errorText:
+                      _descriptionValidate ? 'Value Can\'t Be Empty' : null,
                 ),
                 maxLines: null,
               ),
@@ -450,12 +485,28 @@ class _AddEventPageState extends State<AddEventPage> {
           ),
           RaisedButton(
             onPressed: () {
-              debugPrint('button clicked');
-              _saveForm();
-              _saveToNature();
-              _saveToForm();
-              _pushEvent();
-              Navigator.pop(context);
+              if ((eventNameController.text.isEmpty != true) &&
+                  (eventAddressController.text.isEmpty != true) &&
+                  (eventDescriptionController.text.isEmpty != true)) {
+                debugPrint('button clicked');
+                _saveForm();
+                _saveToNature();
+                _saveToForm();
+                _pushEvent();
+                Navigator.pop(context);
+              } else {
+                setState(() {
+                  eventNameController.text.isEmpty
+                      ? _nameValidate = true
+                      : _nameValidate = false;
+                  eventAddressController.text.isEmpty
+                      ? _addressValidate = true
+                      : _addressValidate = false;
+                  eventDescriptionController.text.isEmpty
+                      ? _descriptionValidate = true
+                      : _descriptionValidate = false;
+                });
+              }
             },
             child: Text('Create Event'),
           ),

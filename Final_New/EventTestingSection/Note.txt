@@ -7,18 +7,25 @@ ProviderTest:
     
 
 TODO:
-
-Implment event detail page => nature and form icon, add photo button?
-food.icon remake
+refresh frequency
+Modify event page?
+Implment event detail page, Add photo button?
 photo gallery
-default location why tin shui wai s  tation?
-add Firebase Rule
+event push page validation
+camera screen button position
+new nature category :informative/studt
+default location why tin shui wai station?
+upgrade Firebase Rule
+camera: upload to sus_event?
+wrong info when login
 
 Other:
 duration of flush bar(not preferred)? see its youtube and see if there is solution not to create a new one(preferred)
-format the detail to be shown on flush bar
+Display name no use still
 camera page
-eventdetailpage text style
+
 
 1. stream listen to the change of ProviderTest <- How
 2. then changed then do sth
+
+
