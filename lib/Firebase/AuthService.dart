@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+//import 'user.dart';
 
 abstract class AuthService {
   //Future<User> currentUser();
@@ -7,5 +8,5 @@ abstract class AuthService {
   Future<User> getCurrentUser();
   Future<void> signOut();
   Stream<User> get onAuthStateChanged;
-  void dispose();
+  void dispose(); //neccessary?
 }

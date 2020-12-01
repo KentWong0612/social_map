@@ -1,0 +1,24 @@
+DBrealTimeTest:
+    1. CRUD tutorial
+    2. Event Table download
+
+ProviderTest:
+    1. add Event page connected
+    
+
+TODO:
+refresh frequency
+Implment event detail page, Add photo button?
+photo gallery
+new nature category :informative/study
+upgrade Firebase Rule
+camera: upload to sus_event?
+introduction screen
+
+Other:
+duration of flush bar(not preferred)? see its youtube and see if there is solution not to create a new one(preferred)
+Display name no use still
+camera page
+
+
+
