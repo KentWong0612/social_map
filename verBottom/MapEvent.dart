@@ -65,7 +65,7 @@ class MapEvent {
       eventNatureTrue.add('photo spot');
     }
     if (eventNature['nightlife'] == true) {
-      eventNatureTrue.add('nightlife');
+      eventNatureTrue.add('nighlife');
     }
     if (eventNature['sports'] == true) {
       eventNatureTrue.add('sports');
@@ -101,13 +101,23 @@ class MapEvent {
 
   //constructor
   //TODO: add assert function
-  MapEvent(this.eventLocation, this.eventName, this.eventHost, this.eventAddress, this.eventDescription, this.startDate, this.endDate, this.eventNature, this.eventForm) {
+  MapEvent(
+      this.eventLocation,
+      this.eventName,
+      this.eventHost,
+      this.eventAddress,
+      this.eventDescription,
+      this.startDate,
+      this.endDate,
+      this.eventNature,
+      this.eventForm) {
     if (eventNature != null) {
       _saveToTrueNature();
     }
     if (eventForm != null) {
       _saveToTrueForm();
     }
-    print('MapEvent Class Test: $eventName is $eventNatureTrue and $eventFormTrue');
+    print(
+        'MapEvent Class Test: $eventName is $eventNatureTrue and $eventFormTrue');
   }
 }

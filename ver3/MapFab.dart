@@ -7,19 +7,19 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'EventDetailPage.dart';
-import 'Firebase/MapEventProviderFS.dart';
-import 'addEventPageFS.dart';
+import 'Firebase/MapEventProvider.dart';
+import 'addEventPage.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flushbar/flushbar.dart';
 import 'MapEvent.dart';
 
-class MapFabScreen extends StatefulWidget {
+class MapTestScreen extends StatefulWidget {
   @override
-  _MapFabScreenState createState() => _MapFabScreenState();
+  _MapTestScreenState createState() => _MapTestScreenState();
 }
 
-class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+class _MapTestScreenState extends State<MapTestScreen> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   GoogleMapController mapController;
   String _mapStyle;
   var firebaseUser;
@@ -36,7 +36,7 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
   StreamSubscription _locationSubscription;
 
   Animation<double> _animation;
-  AnimationController _animationControllerForFab;
+  AnimationController _animationCOntrollerForFab;
 
   Flushbar flush;
 
@@ -59,19 +59,19 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
   }
 
   Marker createMarkerForEvent(String markerID, LatLng location) {
-    print('icon test: ${eventTableDB.eventMapFS[markerID].eventNatureTrue[0]}');
+    print('icon test: ${eventTableDB.eventMap[markerID].eventNatureTrue[0]}');
     return Marker(
       markerId: MarkerId(markerID),
       draggable: false,
       position: location,
-      icon: icon_list[eventTableDB.eventMapFS[markerID].eventNatureTrue[0]],
+      icon: icon_list[eventTableDB.eventMap[markerID].eventNatureTrue[0]],
       //icon: icon_list['photo spot'],
       onTap: () {
         debugPrint('debug: ' + markerID + ' tapped');
         flush = Flushbar<bool>(
           flushbarPosition: FlushbarPosition.TOP,
           title: markerID,
-          message: eventTableDB.eventMapFS[markerID].eventDescription,
+          message: eventTableDB.eventMap[markerID].eventDescription,
           icon: Icon(
             Icons.info_outline,
             color: Colors.blue,
@@ -163,12 +163,12 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
     rootBundle.loadString('assets/map_style.txt').then((string) {
       _mapStyle = string;
     });
-    _animationControllerForFab = AnimationController(
+    _animationCOntrollerForFab = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 260),
     );
-    final curvedAnimationForFab = CurvedAnimation(curve: Curves.easeInOut, parent: _animationControllerForFab);
-    _animation = Tween<double>(begin: 0, end: 1).animate(curvedAnimationForFab);
+    final curvedAnimationFab = CurvedAnimation(curve: Curves.easeInOut, parent: _animationCOntrollerForFab);
+    _animation = Tween<double>(begin: 0, end: 1).animate(curvedAnimationFab);
 
     super.initState();
     //add marker into marker list
@@ -340,10 +340,10 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
     super.dispose();
   }
 
-  EventTableFromDBFS eventTableDB;
+  EventTableFromDB eventTableDB;
   void _addEventToMarkerAndList() async {
-    print('data printing check ${eventTableDB.proplist.length}');
-    for (var element in eventTableDB.proplist) {
+    print('data printing check ${eventTableDB.testinglist.length}');
+    for (var element in eventTableDB.testinglist) {
       //print( 'event name = ${element['eventName']} , event position = ${element['lattitude']}, ${element['longitude']}');
       temp = MapEvent(LatLng(double.tryParse(element['lattitude'].toString()), double.tryParse(element['longitude'].toString())), element['eventName'], element['eventHost'], element['eventAddress'], element['eventDescription'], element['startDate'], element['EndDate'], element['eventNature'],
           element['eventForm']);
@@ -378,10 +378,10 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     firebaseUser = context.watch<User>();
-    eventTableDB = context.watch<EventTableFromDBFS>();
+    eventTableDB = context.watch<EventTableFromDB>();
 
     if (firebaseUser == null) {
-      return Consumer<EventTableFromDBFS>(
+      return Consumer<EventTableFromDB>(
         builder: (context, eventTableDB, child) => Stack(children: [
           Scaffold(
             body: GoogleMap(
@@ -409,7 +409,7 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
                   titleStyle: TextStyle(fontSize: 16, color: Colors.white),
                   onPress: () {
                     _restartMarker();
-                    _animationControllerForFab.reverse();
+                    _animationCOntrollerForFab.reverse();
                   },
                 ),
                 Bubble(
@@ -420,7 +420,7 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
                   titleStyle: TextStyle(fontSize: 16, color: Colors.white),
                   onPress: () {
                     _placeScreenMarker();
-                    _animationControllerForFab.reverse();
+                    _animationCOntrollerForFab.reverse();
                   },
                 ),
                 Bubble(
@@ -431,7 +431,7 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
                   titleStyle: TextStyle(fontSize: 16, color: Colors.white),
                   onPress: () {
                     _saveDataToSharedPreference();
-                    _animationControllerForFab.reverse();
+                    _animationCOntrollerForFab.reverse();
                   },
                 ),
               ],
@@ -440,7 +440,7 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
               animation: _animation,
 
               // On pressed change animation state
-              onPress: () => _animationControllerForFab.isCompleted ? _animationControllerForFab.reverse() : _animationControllerForFab.forward(),
+              onPress: () => _animationCOntrollerForFab.isCompleted ? _animationCOntrollerForFab.reverse() : _animationCOntrollerForFab.forward(),
 
               // Floating Action button Icon color
               iconColor: Colors.blue,
@@ -473,7 +473,7 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
         ]),
       );
     } else {
-      return Consumer<EventTableFromDBFS>(
+      return Consumer<EventTableFromDB>(
         builder: (context, eventTableDB, child) => Stack(children: [
           Scaffold(
               body: GoogleMap(
@@ -501,7 +501,7 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
                     titleStyle: TextStyle(fontSize: 16, color: Colors.white),
                     onPress: () {
                       _restartMarker();
-                      _animationControllerForFab.reverse();
+                      _animationCOntrollerForFab.reverse();
                     },
                   ),
                   Bubble(
@@ -512,7 +512,7 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
                     titleStyle: TextStyle(fontSize: 16, color: Colors.white),
                     onPress: () {
                       _placeScreenMarker();
-                      _animationControllerForFab.reverse();
+                      _animationCOntrollerForFab.reverse();
                     },
                   ),
                   Bubble(
@@ -524,7 +524,7 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
                     onPress: () {
                       debugPrint('add Event');
                       _addEvent(context);
-                      _animationControllerForFab.reverse();
+                      _animationCOntrollerForFab.reverse();
                     },
                   ),
                   Bubble(
@@ -535,7 +535,7 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
                     titleStyle: TextStyle(fontSize: 16, color: Colors.white),
                     onPress: () {
                       _saveDataToSharedPreference();
-                      _animationControllerForFab.reverse();
+                      _animationCOntrollerForFab.reverse();
                     },
                   ),
                 ],
@@ -544,7 +544,7 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
                 animation: _animation,
 
                 // On pressed change animation state
-                onPress: () => _animationControllerForFab.isCompleted ? _animationControllerForFab.reverse() : _animationControllerForFab.forward(),
+                onPress: () => _animationCOntrollerForFab.isCompleted ? _animationCOntrollerForFab.reverse() : _animationCOntrollerForFab.forward(),
 
                 // Floating Action button Icon color
                 iconColor: Colors.blue,

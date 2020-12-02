@@ -3,14 +3,14 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'EventDetailPage.dart';
 import 'Firebase/AuthenticationService.dart';
-import 'Firebase/MapEventProviderFS.dart';
-import 'MapFab copy.dart';
+import 'Firebase/MapEventProvider.dart';
 import 'MapFab.dart';
+import 'TestingTabPage.dart';
 import 'camera_page.dart';
 import 'SettingPage.dart';
+import 'Map.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 //TODO: changed authservice.dart ge user from cutom to firebase one, test if login still work
 Future<void> main() async {
@@ -36,8 +36,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<EventTableFromDBFS>(
-          create: (context) => EventTableFromDBFS(FirebaseFirestore.instance),
+        ChangeNotifierProvider<EventTableFromDB>(
+          create: (context) => EventTableFromDB(FirebaseDatabase.instance.reference()),
         ),
         // to pass the instance to the service for doing login
         Provider<AuthenticationService>(
@@ -66,7 +66,7 @@ class AuthenticationWrapper extends StatelessWidget {
     }
 
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           bottom: TabBar(
@@ -83,6 +83,10 @@ class AuthenticationWrapper extends StatelessWidget {
                 icon: Icon(Icons.camera),
                 text: 'Camera',
               ),
+              Tab(
+                icon: Icon(Icons.photo),
+                text: 'Camera',
+              ),
             ],
           ),
           title: searchBar,
@@ -97,9 +101,10 @@ class AuthenticationWrapper extends StatelessWidget {
         body: TabBarView(
           physics: NeverScrollableScrollPhysics(),
           children: [
-            MapFabScreen(),
+            MapScreen(),
             SettingPage(),
             CameraScreen(),
+            TestingTabPage(),
           ],
         ),
       ),
@@ -110,7 +115,7 @@ class AuthenticationWrapper extends StatelessWidget {
 class DataSearch extends SearchDelegate<String> {
   //TODOL recent search not working
   final recentSearch = [];
-  EventTableFromDBFS eventTableDB;
+  EventTableFromDB eventTableDB;
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -152,8 +157,8 @@ class DataSearch extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    eventTableDB = context.watch<EventTableFromDBFS>();
-    final suggestionList = query.isEmpty ? recentSearch : eventTableDB.eventMapFS.keys.where((p) => p.toLowerCase().startsWith(query.toLowerCase())).toList();
+    eventTableDB = context.watch<EventTableFromDB>();
+    final suggestionList = query.isEmpty ? recentSearch : eventTableDB.eventMap.keys.where((p) => p.toLowerCase().startsWith(query.toLowerCase())).toList();
 
     return ListView.builder(
       itemBuilder: (context, index) => ListTile(

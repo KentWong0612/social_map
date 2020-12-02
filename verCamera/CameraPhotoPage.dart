@@ -5,12 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-class CameraScreen extends StatefulWidget {
+class CameraPhotoScreen extends StatefulWidget {
+  List<String> listOfPath;
+  CameraPhotoScreen(this.listOfPath);
+
   @override
-  _CameraScreenState createState() => _CameraScreenState();
+  _CameraScreenPhotoState createState() => _CameraScreenPhotoState();
 }
 
-class _CameraScreenState extends State<CameraScreen> {
+class _CameraScreenPhotoState extends State<CameraPhotoScreen> {
   List<CameraDescription> _cameraList;
   CameraDescription firstCamera;
   CameraController _controller;
@@ -71,9 +74,27 @@ class _CameraScreenState extends State<CameraScreen> {
           },
         ),
       ),
+      Padding(
+        padding: EdgeInsets.only(top: 50, left: 20),
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: FloatingActionButton(
+            heroTag: 'cancel',
+            backgroundColor: Colors.red,
+            child: Icon(
+              Icons.cancel,
+            ),
+            // Provide an onPressed callback.
+            onPressed: () async {
+              Navigator.pop(context, null);
+            },
+          ),
+        ),
+      ),
       Align(
         alignment: Alignment.bottomCenter,
         child: FloatingActionButton(
+          heroTag: 'take photo',
           child: Icon(Icons.camera_alt),
           // Provide an onPressed callback.
           onPressed: () async {
@@ -86,12 +107,8 @@ class _CameraScreenState extends State<CameraScreen> {
                 '${DateTime.now()}.png',
               );
               await _controller.takePicture(path);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DisplayPictureScreen(imagePath: path),
-                ),
-              );
+              widget.listOfPath.add(path);
+              Navigator.pop(context, path);
             } catch (e) {
               print(e);
             }

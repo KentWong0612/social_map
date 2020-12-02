@@ -6,6 +6,7 @@ import 'Firebase/AuthenticationService.dart';
 import 'Firebase/MapEventProviderFS.dart';
 import 'MapFab copy.dart';
 import 'MapFab.dart';
+import 'TestingTabPage.dart';
 import 'camera_page.dart';
 import 'SettingPage.dart';
 import 'package:provider/provider.dart';
@@ -64,44 +65,64 @@ class AuthenticationWrapper extends StatelessWidget {
     if (firebaseUser != null) {
       debugPrint(firebaseUser.email);
     }
+    List<Widget> widget_list = [MapFabScreen2(), SettingPage(), TestingTabPage()];
+    return BottomNavigatorView(widget_list);
+  }
+}
 
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          bottom: TabBar(
-            tabs: [
-              Tab(
-                icon: Icon(Icons.map),
-                text: 'Map',
-              ),
-              Tab(
-                icon: Icon(Icons.settings),
-                text: 'Setting',
-              ),
-              Tab(
-                icon: Icon(Icons.camera),
-                text: 'Camera',
-              ),
-            ],
+class BottomNavigatorView extends StatefulWidget {
+  final List<Widget> screens;
+  BottomNavigatorView(this.screens);
+  @override
+  _BottomNavigatorViewState createState() => _BottomNavigatorViewState();
+}
+
+class _BottomNavigatorViewState extends State<BottomNavigatorView> {
+  int _selectedIndex = 0;
+  MapFabScreen mapScreenWidget;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget searchBar = Text('Social Map');
+    return Scaffold(
+      appBar: AppBar(
+        title: searchBar,
+        actions: [
+          IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                showSearch(context: context, delegate: DataSearch());
+              })
+        ],
+      ),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: widget.screens,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: 'Map',
           ),
-          title: searchBar,
-          actions: [
-            IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {
-                  showSearch(context: context, delegate: DataSearch());
-                })
-          ],
-        ),
-        body: TabBarView(
-          physics: NeverScrollableScrollPhysics(),
-          children: [
-            MapFabScreen(),
-            SettingPage(),
-            CameraScreen(),
-          ],
-        ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Setting',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.camera),
+            label: 'Camera',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[800],
+        onTap: _onItemTapped,
       ),
     );
   }

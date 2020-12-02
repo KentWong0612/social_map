@@ -108,7 +108,7 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
       photo_spot_Icon = d;
       icon_list['photo spot'] = photo_spot_Icon;
     });
-    BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 1.5), 'assets/nighlife.png').then((d) {
+    BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 1.5), 'assets/nightlife.png').then((d) {
       nightlife_Icon = d;
       icon_list['nightlife'] = nightlife_Icon;
     });

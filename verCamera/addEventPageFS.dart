@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +11,9 @@ import 'package:jiffy/jiffy.dart';
 import 'package:multiselect_formfield/multiselect_formfield.dart';
 import 'package:date_range_form_field/date_range_form_field.dart';
 import 'package:provider/provider.dart';
+import 'package:path/path.dart';
+import 'CameraPhotoPage.dart';
+import 'photoPickPage.dart';
 
 //TODO: reintroduce provider -> uid push
 class AddEventPage extends StatefulWidget {
@@ -19,6 +25,21 @@ class AddEventPage extends StatefulWidget {
 }
 
 class _AddEventPageState extends State<AddEventPage> {
+  FirebaseStorage storage = FirebaseStorage.instance;
+
+  Future<void> uploadFile(String filePath) async {
+    File file = await File(filePath);
+    String fileName = await basename(filePath);
+    Reference firebaseStorageRef = FirebaseStorage.instance.ref().child('events/${eventNameController.text.trim()}/$fileName');
+
+    UploadTask uploadTask = firebaseStorageRef.putFile(file);
+
+    TaskSnapshot taskSnapshot = await uploadTask.snapshot;
+    await taskSnapshot.ref.getDownloadURL().then(
+          (value) => print("Done: $value"),
+        );
+  }
+
   final FirebaseFirestore storeRef = FirebaseFirestore.instance;
   final TextEditingController eventNameController = TextEditingController();
   final TextEditingController eventAddressController = TextEditingController();
@@ -62,8 +83,6 @@ class _AddEventPageState extends State<AddEventPage> {
   }
 
   void _saveToNature() {
-    //debugPrint('_saveToNature');
-    //print(eventNatureListpart);
     eventNatureListpart.clear();
     if (eventNatureList.contains('photo spot')) {
       eventNatureListpart['photo spot'] = true;
@@ -125,7 +144,6 @@ class _AddEventPageState extends State<AddEventPage> {
     } else {
       eventNatureListpart['style'] = false;
     }
-    //print(eventNatureListpart);
   }
 
   void _saveToForm() {
@@ -189,7 +207,7 @@ class _AddEventPageState extends State<AddEventPage> {
     Map<String, String> part1 = {
       'eventName': eventNameController.text.trim(),
       'eventAddress': eventAddressController.text.trim(),
-      'eventHost': 'Ku',
+      'eventHost': firebaseUser.displayName,
       'eventDescription': eventDescriptionController.text.trim(),
     };
     Map<String, double> part2 = {
@@ -204,10 +222,6 @@ class _AddEventPageState extends State<AddEventPage> {
       'uid': firebaseUser.uid,
     };
     DocumentReference pushEventDBFS = storeRef.collection('event').doc();
-    //debugPrint('checking before pushing');
-    //print(part1);
-    //print(part2);
-    //print(part3);
     pushEventDBFS.set(part1).whenComplete(() {
       //print('part1 of event please check');
     }).catchError((error) {
@@ -234,17 +248,13 @@ class _AddEventPageState extends State<AddEventPage> {
     pushEventDBFS.update(endDate).whenComplete(() {}).catchError((error) {
       print(error);
     });
+    if (listOfPath.isEmpty != true) {
+      for (var photoPath in listOfPath) {
+        uploadFile(photoPath);
+      }
+    }
+
     print('event pushed by ${firebaseUser.uid}');
-    Flushbar flush = Flushbar<bool>(
-      flushbarPosition: FlushbarPosition.TOP,
-      duration: Duration(seconds: 3),
-      title: 'Event created!',
-      message: 'Please refresh to see the new event',
-      icon: Icon(
-        Icons.done,
-        color: Colors.blue,
-      ),
-    )..show(context);
   }
 
   @override
@@ -264,6 +274,60 @@ class _AddEventPageState extends State<AddEventPage> {
   }
 
   User firebaseUser;
+  List<String> listOfPath = [];
+  String path_Returned = null;
+  _navigateAndTakePhoto(BuildContext context) async {
+    // Navigator.push returns a Future that will complete after we call
+    // Navigator.pop on the Selection Screen!
+    final result = await Navigator.push(
+      context,
+      new MaterialPageRoute(builder: (context) => CameraPhotoScreen(listOfPath)),
+    );
+    setState(() {
+      if (result != null) {
+        path_Returned = result;
+      }
+    });
+    // After the Selection Screen returns a result, show it in a Snackbar!
+  }
+
+  List<Widget> photoScroll() {
+    List<Widget> photoList = [];
+    if (listOfPath.isEmpty == true) {
+      return [
+        RichText(
+          text: TextSpan(
+            text: 'You can add at most 4 photos',
+            style: TextStyle(fontSize: 15, color: Colors.black),
+          ),
+        ),
+      ];
+    }
+    for (var path in listOfPath) {
+      Widget temp = Container(
+        child: Stack(
+          children: [
+            Image.file(File(path)),
+            Align(
+              alignment: Alignment.topLeft,
+              child: FloatingActionButton(
+                heroTag: path,
+                onPressed: () {
+                  setState(() {
+                    listOfPath.remove(path);
+                  });
+                },
+                child: Icon(Icons.delete),
+              ),
+            ),
+          ],
+        ),
+      );
+      photoList.add(temp);
+    }
+    return photoList;
+  }
+
   @override
   Flushbar flush;
   Widget build(BuildContext context) {
@@ -496,6 +560,59 @@ class _AddEventPageState extends State<AddEventPage> {
               }
             },
             child: Text('Create Event'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              if (listOfPath.length < 4) {
+                _navigateAndTakePhoto(context);
+              } else {
+                flush = Flushbar<bool>(
+                    flushbarPosition: FlushbarPosition.TOP,
+                    title: 'Sorry',
+                    message: 'At most 4 photos',
+                    icon: Icon(
+                      Icons.info_outline,
+                      color: Colors.blue,
+                    ))
+                  ..show(context);
+              }
+            },
+            child: Text('Take a Photo for the event'),
+          ),
+          /*
+          RaisedButton(
+            onPressed: () async {
+              setState(() {});
+            },
+            child: Text('refresh'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              setState(() {
+                listOfPath.clear();
+              });
+            },
+            child: Text('Clear'),
+          ),
+          RaisedButton(
+            onPressed: () {
+              uploadFile(listOfPath[0]);
+            },
+            child: Text('upload try try'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              print('list of path[0] is ${listOfPath}');
+            },
+            child: Text('print list of path'),
+          ),
+          */
+          Container(
+            height: 200,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: photoScroll(),
+            ),
           ),
         ]),
       ),

@@ -6,6 +6,7 @@ import 'Firebase/AuthenticationService.dart';
 import 'Firebase/MapEventProviderFS.dart';
 import 'MapFab copy.dart';
 import 'MapFab.dart';
+import 'PickerPage.dart';
 import 'camera_page.dart';
 import 'SettingPage.dart';
 import 'package:provider/provider.dart';
@@ -66,7 +67,7 @@ class AuthenticationWrapper extends StatelessWidget {
     }
 
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           bottom: TabBar(
@@ -78,6 +79,10 @@ class AuthenticationWrapper extends StatelessWidget {
               Tab(
                 icon: Icon(Icons.settings),
                 text: 'Setting',
+              ),
+              Tab(
+                icon: Icon(Icons.photo),
+                text: 'Test',
               ),
               Tab(
                 icon: Icon(Icons.camera),
@@ -97,8 +102,9 @@ class AuthenticationWrapper extends StatelessWidget {
         body: TabBarView(
           physics: NeverScrollableScrollPhysics(),
           children: [
-            MapFabScreen(),
+            MapFabScreen2(),
             SettingPage(),
+            TestingTabPage(),
             CameraScreen(),
           ],
         ),

@@ -71,7 +71,7 @@ class _AddEventPageState extends State<AddEventPage> {
       eventNatureListpart['photo spot'] = false;
     }
     if (eventNatureList.contains('nightlife')) {
-      eventNatureListpart['nightlife'] = true;
+      eventNatureListpart['nighlife'] = true;
     } else {
       eventNatureListpart['nightlife'] = false;
     }

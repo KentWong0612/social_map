@@ -50,6 +50,8 @@ dependencies:
   carousel_slider: ^2.3.1
   cloud_firestore: ^0.14.3+1
   image_picker: ^0.6.7+14
+  multi_image_picker: ^4.7.14
+  firebase_storage: ^5.1.0
   
 dev_dependencies:
   flutter_test:
@@ -76,6 +78,11 @@ flutter:
     - assets/TestingMapPin.png
     - assets/mapStyle.txt
     - assets/thumbnail.jpg
+    - assets/thumbnail (1).jpg
+    - assets/thumbnail (2).jpg
+    - assets/thumbnail (3).jpg
+    - assets/thumbnail (4).jpg
+    - assets/thumbnail (5).jpg
     - assets/TestingMapPin.png
     - assets/currentLocation.png
     - assets/photo_spot.png
@@ -90,6 +97,10 @@ flutter:
     - assets/lohas.png
     - assets/style.png
     - assets/home.png
+    - assets/left_arrow.png
+    - assets/right_arrow.png
+    - assets/No_photo.png
+    - assets/bad_connection.png
   
   
   # An image asset can refer to one or more resolution-specific "variants", see

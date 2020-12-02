@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,12 +13,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flushbar/flushbar.dart';
 import 'MapEvent.dart';
 
-class MapFabScreen extends StatefulWidget {
+class MapFabScreen2 extends StatefulWidget {
   @override
   _MapFabScreenState createState() => _MapFabScreenState();
 }
 
-class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+class _MapFabScreenState extends State<MapFabScreen2> with SingleTickerProviderStateMixin {
   GoogleMapController mapController;
   String _mapStyle;
   var firebaseUser;
@@ -108,7 +107,7 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
       photo_spot_Icon = d;
       icon_list['photo spot'] = photo_spot_Icon;
     });
-    BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 1.5), 'assets/nighlife.png').then((d) {
+    BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 1.5), 'assets/nightlife.png').then((d) {
       nightlife_Icon = d;
       icon_list['nightlife'] = nightlife_Icon;
     });
@@ -192,8 +191,6 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
     });
   }
 
-  @override
-  bool get wantKeepAlive => true;
   //sharedpref for saving home position
   SharedPreferences prefs;
   Marker home;

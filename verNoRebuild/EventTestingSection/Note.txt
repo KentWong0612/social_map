@@ -14,7 +14,6 @@ new nature category :informative/study
 upgrade Firebase Rule
 camera: upload to sus_event?
 introduction screen
-apps turn black screen if jumping out of the apps, could be routing problem
 
 Other:
 duration of flush bar(not preferred)? see its youtube and see if there is solution not to create a new one(preferred)

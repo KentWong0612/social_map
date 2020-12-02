@@ -14,12 +14,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flushbar/flushbar.dart';
 import 'MapEvent.dart';
 
-class MapFabScreen extends StatefulWidget {
+class MapFabScreen2 extends StatefulWidget {
   @override
   _MapFabScreenState createState() => _MapFabScreenState();
 }
 
-class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+class _MapFabScreenState extends State<MapFabScreen2> with SingleTickerProviderStateMixin {
   GoogleMapController mapController;
   String _mapStyle;
   var firebaseUser;
@@ -192,8 +192,6 @@ class _MapFabScreenState extends State<MapFabScreen> with SingleTickerProviderSt
     });
   }
 
-  @override
-  bool get wantKeepAlive => true;
   //sharedpref for saving home position
   SharedPreferences prefs;
   Marker home;
