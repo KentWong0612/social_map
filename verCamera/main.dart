@@ -66,7 +66,7 @@ class AuthenticationWrapper extends StatelessWidget {
     }
 
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           bottom: TabBar(
@@ -78,10 +78,6 @@ class AuthenticationWrapper extends StatelessWidget {
               Tab(
                 icon: Icon(Icons.settings),
                 text: 'Setting',
-              ),
-              Tab(
-                icon: Icon(Icons.camera),
-                text: 'Camera',
               ),
             ],
           ),
@@ -99,7 +95,6 @@ class AuthenticationWrapper extends StatelessWidget {
           children: [
             MapFabScreen(),
             SettingPage(),
-            CameraScreen(),
           ],
         ),
       ),

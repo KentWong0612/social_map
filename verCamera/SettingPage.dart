@@ -75,8 +75,8 @@ class SettingPageState extends State<SettingPage> {
           tiles: [
             accountTiles(context),
             SettingsTile.switchTile(
-              title: 'Use fingerprint',
-              leading: Icon(Icons.fingerprint),
+              title: 'Currently not available',
+              leading: Icon(Icons.bluetooth_disabled),
               switchValue: flag,
               onToggle: (bool value) {
                 setState(() {
@@ -89,13 +89,6 @@ class SettingPageState extends State<SettingPage> {
               leading: Icon(Icons.account_box),
               onTap: () {
                 context.read<AuthenticationService>().signOut();
-              },
-            ),
-            SettingsTile(
-              title: 'test',
-              leading: Icon(Icons.account_box),
-              onTap: () {
-                print('tell me $firebaseUser');
               },
             ),
           ],
