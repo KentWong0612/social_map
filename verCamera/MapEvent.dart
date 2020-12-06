@@ -15,6 +15,7 @@ class MapEvent {
   dynamic eventNature;
   dynamic eventForm;
   String eventDescription;
+  String uid;
   //List<bool> targetAgeRange;
   String startDate;
   String endDate;
@@ -101,7 +102,7 @@ class MapEvent {
 
   //constructor
   //TODO: add assert function
-  MapEvent(this.eventLocation, this.eventName, this.eventHost, this.eventAddress, this.eventDescription, this.startDate, this.endDate, this.eventNature, this.eventForm) {
+  MapEvent(this.eventLocation, this.eventName, this.eventHost, this.eventAddress, this.eventDescription, this.startDate, this.endDate, this.eventNature, this.eventForm, this.uid) {
     if (eventNature != null) {
       _saveToTrueNature();
     }

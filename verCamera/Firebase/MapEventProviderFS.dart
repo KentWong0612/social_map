@@ -51,6 +51,7 @@ class EventTableFromDBFS extends ChangeNotifier {
       String eventDescription;
       String startDate;
       String endDate;
+      String uid;
       //TODO: add eventID?
       //TODO: FS have type check, here may need modify
       for (var key in property_map.keys.toList()) {
@@ -95,12 +96,15 @@ class EventTableFromDBFS extends ChangeNotifier {
             eventForm = property_map[key];
           }
         } else if (key == 'uid') {
-          ;
+          if (property_map[key] != null) {
+            uid = property_map[key];
+            print('speical testing ${property_map[key]}');
+          }
         } else {
           print('ProviderTestFS: error $key');
         }
       }
-      eventMapFS[eventName] = MapEvent(LatLng(lattitude, longitude), eventName, eventHost, eventAddress, eventDescription, startDate, endDate, eventNature, eventForm);
+      eventMapFS[eventName] = MapEvent(LatLng(lattitude, longitude), eventName, eventHost, eventAddress, eventDescription, startDate, endDate, eventNature, eventForm, uid);
       proplist.add(element.data());
     }
 

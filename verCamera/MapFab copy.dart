@@ -343,7 +343,7 @@ class _MapFabScreenState extends State<MapFabScreen2> with SingleTickerProviderS
     for (var element in eventTableDB.proplist) {
       //print( 'event name = ${element['eventName']} , event position = ${element['lattitude']}, ${element['longitude']}');
       temp = MapEvent(LatLng(double.tryParse(element['lattitude'].toString()), double.tryParse(element['longitude'].toString())), element['eventName'], element['eventHost'], element['eventAddress'], element['eventDescription'], element['startDate'], element['EndDate'], element['eventNature'],
-          element['eventForm']);
+          element['eventForm'], element['uid']);
       await eventSavedFromDB.add(temp);
       setState(() {
         event = createMarkerForEvent(element['eventName'], LatLng(double.tryParse(element['lattitude'].toString()), double.tryParse(element['longitude'].toString())));

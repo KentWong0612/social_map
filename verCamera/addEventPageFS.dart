@@ -203,7 +203,7 @@ class _AddEventPageState extends State<AddEventPage> {
     //print(eventFormListpart);
   }
 
-  void _pushEvent() {
+  Future<void> _pushEvent() async {
     Map<String, String> part1 = {
       'eventName': eventNameController.text.trim(),
       'eventAddress': eventAddressController.text.trim(),
@@ -222,30 +222,30 @@ class _AddEventPageState extends State<AddEventPage> {
       'uid': firebaseUser.uid,
     };
     DocumentReference pushEventDBFS = storeRef.collection('event').doc();
-    pushEventDBFS.set(part1).whenComplete(() {
+    await pushEventDBFS.set(part1).whenComplete(() {
       //print('part1 of event please check');
     }).catchError((error) {
       print(error);
     });
-    pushEventDBFS.update(part2).whenComplete(() {
+    await pushEventDBFS.update(part2).whenComplete(() {
       //print('part2 of event pushed please check');
     }).catchError((error) {
       print(error);
     });
-    pushEventDBFS.update(part3).whenComplete(() {
+    await pushEventDBFS.update(part3).whenComplete(() {
       //print('part3 of event pushed please check');
     }).catchError((error) {
       print(error);
     });
-    pushEventDBFS.update(userID).whenComplete(() {
+    await pushEventDBFS.update(userID).whenComplete(() {
       //print('userID of event pushed please check');
     }).catchError((error) {
       print(error);
     });
-    pushEventDBFS.update(startDate).whenComplete(() {}).catchError((error) {
+    await pushEventDBFS.update(startDate).whenComplete(() {}).catchError((error) {
       print(error);
     });
-    pushEventDBFS.update(endDate).whenComplete(() {}).catchError((error) {
+    await pushEventDBFS.update(endDate).whenComplete(() {}).catchError((error) {
       print(error);
     });
     if (listOfPath.isEmpty != true) {
@@ -546,6 +546,7 @@ class _AddEventPageState extends State<AddEventPage> {
             onPressed: () {
               if ((eventNameController.text.isEmpty != true) && (eventAddressController.text.isEmpty != true) && (eventDescriptionController.text.isEmpty != true)) {
                 debugPrint('button clicked');
+                _saveToDate();
                 _saveForm();
                 _saveToNature();
                 _saveToForm();
