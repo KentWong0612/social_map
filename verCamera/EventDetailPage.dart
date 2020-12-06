@@ -100,6 +100,256 @@ class DetailScreenPage extends StatelessWidget {
     eventTableDB = context.watch<EventTableFromDBFS>();
     targetEvent = eventTableDB.eventMapFS[eventName];
     downloadURL(eventName);
+    if (firebaseUser.uid == 'd83goWBSD4dT8n7KdUNWLPEfdJp1') {
+      print('Download: you are admin');
+      return Scaffold(
+          backgroundColor: Colors.grey[200],
+          appBar: AppBar(
+            title: Text(targetEvent.eventName),
+          ),
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                FutureBuilder(
+                  future: downloadURL(targetEvent.eventName),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    // 请求已结束
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.hasError) {
+                        // 请求失败，显示错误
+                        return Image.asset('assets/bad_connection.png');
+                      } else {
+                        // 请求成功，显示数据
+                        return Stack(
+                          children: [
+                            CarouselSlider(
+                              options: CarouselOptions(
+                                height: 400.0,
+                                enlargeCenterPage: true,
+                              ),
+                              items: [1, 2, 3, 4, 5].map((i) {
+                                return Builder(
+                                  builder: (BuildContext context) {
+                                    return Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      margin: EdgeInsets.symmetric(horizontal: 5.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                      ),
+                                      child: downloaded_Photo[i % downloaded_Photo.length],
+                                    );
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                            Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Container(
+                                height: 50,
+                                child: Image.asset('assets/left_arrow.png'),
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.bottomRight,
+                              child: Container(
+                                height: 50,
+                                child: Image.asset('assets/right_arrow.png'),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    } else {
+                      // 请求未结束，显示loading
+                      return CircularProgressIndicator();
+                    }
+                  },
+                ),
+                Container(
+                  margin: EdgeInsets.only(
+                    top: 10,
+                  ),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
+                    ),
+                    color: Colors.blue[100],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 30, right: 30, top: 10),
+                        child: Text(
+                          targetEvent.eventName,
+                          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 30, right: 30, bottom: 10),
+                        child: RichText(
+                          text: TextSpan(
+                            text: 'Hosted by: ${targetEvent.eventHost}',
+                            style: TextStyle(fontSize: 20, color: Colors.black54, fontStyle: FontStyle.italic),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 10),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
+                    ),
+                    color: Colors.blue[100],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 30,
+                          top: 10,
+                        ),
+                        child: Text(
+                          'Address:',
+                          style: TextStyle(decoration: TextDecoration.underline, fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 20, right: 20, top: 5),
+                        child: RichText(
+                          text: TextSpan(
+                            text: '- Location: ${targetEvent.eventAddress}',
+                            style: TextStyle(fontSize: 15, color: Colors.black),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 30,
+                          top: 10,
+                        ),
+                        child: Text(
+                          'Date:',
+                          style: TextStyle(decoration: TextDecoration.underline, fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 20, right: 20, top: 5),
+                        child: RichText(
+                          text: TextSpan(
+                            text: '- Starting Date: ${targetEvent.startDate}',
+                            style: TextStyle(fontSize: 15, color: Colors.black),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 20,
+                          right: 20,
+                          top: 5,
+                        ),
+                        child: RichText(
+                          text: TextSpan(
+                            text: '- Ending Date: ${targetEvent.endDate}',
+                            style: TextStyle(fontSize: 15, color: Colors.black),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 30,
+                          top: 10,
+                        ),
+                        child: Text(
+                          "What it's about?",
+                          style: TextStyle(decoration: TextDecoration.underline, fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 10),
+                        child: RichText(
+                          text: TextSpan(
+                            text: targetEvent.eventDescription,
+                            style: TextStyle(fontSize: 15, color: Colors.black),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 10, bottom: 10),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
+                    ),
+                    color: Colors.blue[100],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 30,
+                          top: 10,
+                        ),
+                        child: Text(
+                          'Category by nature:',
+                          style: TextStyle(decoration: TextDecoration.underline, fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                          padding: EdgeInsets.only(left: 20, right: 20, top: 5),
+                          child: Row(
+                            children: _buildLabel(targetEvent.eventNatureTrue),
+                          )),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 30,
+                          top: 10,
+                        ),
+                        child: Text(
+                          'Category by form:',
+                          style: TextStyle(decoration: TextDecoration.underline, fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 10),
+                        child: Row(
+                          children: _buildLabel(targetEvent.eventFormTrue),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                RaisedButton(
+                  color: Colors.red,
+                  onPressed: () {
+                    deleteEvent();
+                    Navigator.pop(context);
+                  },
+                  child: Text('delete event'),
+                ),
+              ],
+            ),
+          ));
+    }
     if (firebaseUser.uid == targetEvent.uid) {
       print('Download: you are host');
       return Scaffold(
